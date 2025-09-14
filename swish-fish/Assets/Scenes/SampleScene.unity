@@ -659,7 +659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_numFish: 100
-  m_fishPrefab: {fileID: 5058022661971499114, guid: 94c015d94f6e5364e9b36b960bbe1b77, type: 3}
+  m_fishPrefab: {fileID: 5321673572329997002, guid: 2cb2a20f3b725e842a4e038628f1034e, type: 3}
   m_spawnRadius: 3
   m_bounds: {fileID: 896596925}
   m_boundsForceFactor: 5
