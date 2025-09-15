@@ -23,7 +23,7 @@ public class Boid : MonoBehaviour
     {
         //Clear acceleration from last frame
         Acceleration = Vector3.zero;
-            //Apply forces
+        //Apply forces
         Acceleration += (Vector3)School.GetForceFromBounds(this);
         Acceleration += GetConstraintSpeedForce();
         Acceleration += GetSteeringForce();
