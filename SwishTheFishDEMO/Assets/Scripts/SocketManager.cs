@@ -52,7 +52,7 @@ public class SocketManager : MonoBehaviour
   // Start is called before the first frame update
   private async void Start()
   {
-    _websocket = new WebSocket("ws://localhost:3001");
+    _websocket = new WebSocket("ws://192.168.0.194:3001");
 
     _websocket.OnOpen += OnSocketConnect;
 

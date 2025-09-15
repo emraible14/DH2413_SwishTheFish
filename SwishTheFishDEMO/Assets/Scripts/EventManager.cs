@@ -28,7 +28,7 @@ public class EventManager : MonoBehaviour
     public delegate void SocketCloseAction();
     public static event SocketCloseAction OnSocketClosed;
 
-    public delegate void SurfaceTouchedAction(byte[] information);
+    public delegate void SurfaceTouchedAction();
     public static event SurfaceTouchedAction OnSurfaceTouched;
 
     public static void Dispatch(Event eventType)
@@ -57,7 +57,7 @@ public class EventManager : MonoBehaviour
                 break;
             case Event.SurfaceTouched:
                 if (OnSurfaceTouched == null) return;
-                OnSurfaceTouched(information);
+                OnSurfaceTouched();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null);

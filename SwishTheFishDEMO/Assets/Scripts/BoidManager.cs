@@ -10,6 +10,41 @@ public class BoidManager : MonoBehaviour
 
     private School[] schools;
 
+    ObjectInput objectInput;
+    bool objectOnSurface;
+
+    void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+    {
+        // Debug.ClearDeveloperConsole();
+        if (surfaceFingers.Count > 0)
+        {
+            //Debug.Log(surfaceFingers.Count + " fingers:");
+            foreach (KeyValuePair<int, FingerInput> entry in surfaceFingers)
+            {
+                //Debug.Log(entry.Key + " @ " + entry.Value.position.x + ";" + entry.Value.position.y);
+            }
+        }
+
+        if (objectInputs.Count > 0)
+        {
+            //Debug.Log(objectInputs.Count + " objects:");
+            objectOnSurface = true;
+            foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
+            {
+          
+                    //Debug.Log("Setting objectInput!!!");
+                    objectInput = entry.Value;
+                
+                //Debug.Log(entry.Key + ", tag: " + entry.Value.tagValue + " @ " + entry.Value.position.x + ";" + entry.Value.position.y);
+            }
+        }
+        else
+        {
+            objectOnSurface = false;
+            objectInput = null;
+        }
+    }
+
     private void OnEnable()
     {
         EventManager.OnFishAdded += AddBoid;
@@ -30,6 +65,9 @@ public class BoidManager : MonoBehaviour
             school.BoidManager = this;
             m_boids.AddRange(school.FishSpawner());
         }
+
+        TableManager.Instance.OnTouch += OnTouchReceive;
+        objectInput = null;
     }
 
     public int GetNumBoids()
@@ -42,6 +80,14 @@ public class BoidManager : MonoBehaviour
         m_boids.Add(schools[0].SpawnFish());
     }
 
+    public Vector3 GetWorldPositionOnPlane(Vector3 screenPosition)
+    {
+        var ray = Camera.main.ViewportPointToRay(screenPosition);
+        var xy = new Plane(Vector3.up, new Vector3(0, 15, 0));
+        xy.Raycast(ray, out var distance);
+        return ray.GetPoint(distance);
+    }
+
     void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.Space))
@@ -49,10 +95,17 @@ public class BoidManager : MonoBehaviour
             Debug.Log("Adding fish");
             AddBoid();
         }
+
+        Vector3 propPosition = Vector3.zero;
+        if (objectOnSurface)
+        {
+            propPosition = GetWorldPositionOnPlane(objectInput.position);
+            propPosition.z *= -1;
+        }
         
         foreach (Boid boid in m_boids)
         {
-            boid.UpdateSimulation(Time.fixedDeltaTime);
+            boid.UpdateSimulation(Time.fixedDeltaTime, propPosition, objectOnSurface);
         }
     }
 

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public class Boid : MonoBehaviour 
 {
@@ -10,36 +12,14 @@ public class Boid : MonoBehaviour
     public Vector3 Velocity;
     public Vector3 Acceleration;
 
-    private void Awake()
-    {
-        eventManager = FindObjectOfType<EventManager>();
-    }
-
-    void OnEnable()
-    {
-        EventManager.OnSurfaceTouched += OnSurfaceTouched;
-    }
-
-
-    private void OnDisable()
-    {
-        EventManager.OnSurfaceTouched -= OnSurfaceTouched;
-
-    }
-
-    private void OnSurfaceTouched()
-    {
-        Debug.Log("??????????????????????????");
-        Debug.Log(info);
-
-    }
+    
 
     private void Start()
     {
         Velocity = Random.insideUnitSphere * 2;
     }
 
-    public void UpdateSimulation(float deltaTime)
+    public void UpdateSimulation(float deltaTime, Vector3 objectInput, bool objectOnSurface)
     {
         //Clear acceleration from last frame
         Acceleration = Vector3.zero;
@@ -47,7 +27,7 @@ public class Boid : MonoBehaviour
         Acceleration += (Vector3)School.GetForceFromBounds(this);
         Acceleration += GetConstraintSpeedForce();
         Acceleration += GetSteeringForce();
-        Acceleration += MousePullForce() * 2;
+        Acceleration += PropPullForce(objectInput, objectOnSurface) * 2;
             
 
         //Step simulation
@@ -55,20 +35,12 @@ public class Boid : MonoBehaviour
         Position +=  0.5f * deltaTime * deltaTime * Acceleration + deltaTime * Velocity;
     }
 
-    public Vector3 GetWorldPositionOnPlane(Vector3 screenPosition, float z)
-    {
-        var ray = Camera.main.ScreenPointToRay(screenPosition);
-        var xy = new Plane(Vector3.up, new Vector3(0, 15, 0));
-        xy.Raycast(ray, out var distance);
-        return ray.GetPoint(distance);
-    }
-
-    Vector3 MousePullForce()
+    Vector3 PropPullForce(Vector3 propPosition, bool objectOnSurface)
     {
         var force = Vector3.zero;
-        
-        var mousePos = GetWorldPositionOnPlane(Input.mousePosition, 0);
-        var distance = mousePos - Position; 
+
+        if (!objectOnSurface) return force;
+        var distance = propPosition - Position; 
         force += distance;
             
         if (Velocity.magnitude > 0.1 && distance.magnitude < 2)
