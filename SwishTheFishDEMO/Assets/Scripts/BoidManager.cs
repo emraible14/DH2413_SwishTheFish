@@ -15,45 +15,7 @@ public class BoidManager : MonoBehaviour
 
     ObjectInput spawnProp;
 
-    void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
-    {
-        // Debug.ClearDeveloperConsole();
-        if (surfaceFingers.Count > 0)
-        {
-            //Debug.Log(surfaceFingers.Count + " fingers:");
-            foreach (KeyValuePair<int, FingerInput> entry in surfaceFingers)
-            {
-                //Debug.Log(entry.Key + " @ " + entry.Value.position.x + ";" + entry.Value.position.y);
-            }
-        }
-
-        if (objectInputs.Count > 0)
-        {
-            //Debug.Log(objectInputs.Count + " objects:");
-            foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-            {
-                    if (entry.Value.tagValue == 4)
-                {
-                    spawnProp = entry.Value;
-                }
-                    else
-                {
-
-                    objectOnSurface = true;
-                    //Debug.Log("Setting objectInput!!!");
-                    objectInput = entry.Value;
-                }
-                
-                //Debug.Log(entry.Key + ", tag: " + entry.Value.tagValue + " @ " + entry.Value.position.x + ";" + entry.Value.position.y);
-            }
-        }
-        else
-        {
-            objectOnSurface = false;
-            objectInput = null;
-            spawnProp = null;
-        }
-    }
+    private Camera camera;
 
     private void OnEnable()
     {
@@ -65,9 +27,11 @@ public class BoidManager : MonoBehaviour
         EventManager.OnFishAdded -= AddBoid;
     }
 
-    void Start()
+    private void Start()
     {
         m_boids = new List<Boid>();
+        
+        camera = Camera.main;
 
         schools = GameObject.FindObjectsOfType<School>();
         foreach (var school in schools)
@@ -80,6 +44,33 @@ public class BoidManager : MonoBehaviour
         objectInput = null;
     }
 
+    private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+    {
+        if (objectInputs.Count > 0)
+        {
+            foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
+            { 
+                if (entry.Value.tagValue == 4)
+                {
+                    spawnProp = entry.Value;
+                }
+                else
+                {
+                    objectOnSurface = true;
+                    objectInput = entry.Value;
+                }
+            }
+        }
+        else
+        {
+            objectOnSurface = false;
+            objectInput = null;
+            spawnProp = null;
+        }
+    }
+
+   
+
     public int GetNumBoids()
     {
         return m_boids.Count < 1 ? 0 : m_boids.Count();
@@ -89,23 +80,13 @@ public class BoidManager : MonoBehaviour
     {
         if (spawnProp != null)
         {
-            Vector3 spawnPos = GetWorldPositionOnPlane(spawnProp.position);
-            spawnPos.z *= -1;
+            Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
             m_boids.Add(schools[0].SpawnFish(spawnPos));
 
         } else
         {
-
-        m_boids.Add(schools[0].SpawnFish(Vector3.zero));
+            m_boids.Add(schools[0].SpawnFish(Vector3.zero));
         }
-    }
-
-    public Vector3 GetWorldPositionOnPlane(Vector3 screenPosition)
-    {
-        var ray = Camera.main.ViewportPointToRay(screenPosition);
-        var xy = new Plane(Vector3.up, new Vector3(0, 15, 0));
-        xy.Raycast(ray, out var distance);
-        return ray.GetPoint(distance);
     }
 
     void FixedUpdate()
@@ -119,8 +100,7 @@ public class BoidManager : MonoBehaviour
         Vector3 propPosition = Vector3.zero;
         if (objectOnSurface)
         {
-            propPosition = GetWorldPositionOnPlane(objectInput.position);
-            propPosition.z *= -1;
+            propPosition = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, objectInput.position));
         }
         
         foreach (Boid boid in m_boids)

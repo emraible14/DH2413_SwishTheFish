@@ -8,6 +8,8 @@ using NativeWebSocket;
 public class SocketManager : MonoBehaviour
 {
   private WebSocket _websocket;
+
+  public static string IPAddress = "192.168.0.194:3001";
   
   public static bool Connected { get; private set; }
 
@@ -25,6 +27,7 @@ public class SocketManager : MonoBehaviour
 
   private async void ConnectSocket()
   {
+    Debug.Log("Attempting to connect to: " + IPAddress);
     await _websocket.Connect();
   }
 
@@ -52,7 +55,7 @@ public class SocketManager : MonoBehaviour
   // Start is called before the first frame update
   private async void Start()
   {
-    _websocket = new WebSocket("ws://192.168.0.194:3001");
+    _websocket = new WebSocket("ws://" + IPAddress);
 
     _websocket.OnOpen += OnSocketConnect;
 

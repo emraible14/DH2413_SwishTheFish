@@ -92,6 +92,13 @@ public class School : MonoBehaviour
         set { m_drag = value; }
     }
 
+    [SerializeField] private float propPullDistance = 10f;
+
+    public float PropPullDistance
+    {
+        get { return propPullDistance; }
+    }
+
     public float NeighborRadius
     {
         get { return Mathf.Max(m_alignmentRadius, Mathf.Max(m_separationRadius, m_cohesionRadius)); }
@@ -111,7 +118,7 @@ public class School : MonoBehaviour
     public Boid SpawnFish(Vector3 spawnPos)
     {
         
-        Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : (Vector3)spawnPos;
+        Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
         for (int j = 0; j < 3; ++j)
             spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);

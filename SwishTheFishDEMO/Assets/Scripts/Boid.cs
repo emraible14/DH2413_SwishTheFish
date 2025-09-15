@@ -11,9 +11,7 @@ public class Boid : MonoBehaviour
     public Vector3 Position;
     public Vector3 Velocity;
     public Vector3 Acceleration;
-
     
-
     private void Start()
     {
         Velocity = Random.insideUnitSphere * 2;
@@ -38,17 +36,18 @@ public class Boid : MonoBehaviour
     Vector3 PropPullForce(Vector3 propPosition, bool objectOnSurface)
     {
         var force = Vector3.zero;
-
         if (!objectOnSurface) return force;
-        var distance = propPosition - Position; 
+        
+        var distance = propPosition - Position;
+        if (distance.magnitude > School.PropPullDistance) return force;
+        
         force += distance;
             
         if (Velocity.magnitude > 0.1 && distance.magnitude < 2)
         {
             Velocity *= 0.8f;
         }
-
-
+        
         return force;
     }
 
