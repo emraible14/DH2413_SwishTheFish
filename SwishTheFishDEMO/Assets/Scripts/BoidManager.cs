@@ -13,6 +13,8 @@ public class BoidManager : MonoBehaviour
     ObjectInput objectInput;
     bool objectOnSurface;
 
+    ObjectInput spawnProp;
+
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
     {
         // Debug.ClearDeveloperConsole();
@@ -28,12 +30,19 @@ public class BoidManager : MonoBehaviour
         if (objectInputs.Count > 0)
         {
             //Debug.Log(objectInputs.Count + " objects:");
-            objectOnSurface = true;
             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
             {
-          
+                    if (entry.Value.tagValue == 4)
+                {
+                    spawnProp = entry.Value;
+                }
+                    else
+                {
+
+                    objectOnSurface = true;
                     //Debug.Log("Setting objectInput!!!");
                     objectInput = entry.Value;
+                }
                 
                 //Debug.Log(entry.Key + ", tag: " + entry.Value.tagValue + " @ " + entry.Value.position.x + ";" + entry.Value.position.y);
             }
@@ -42,6 +51,7 @@ public class BoidManager : MonoBehaviour
         {
             objectOnSurface = false;
             objectInput = null;
+            spawnProp = null;
         }
     }
 
@@ -77,7 +87,17 @@ public class BoidManager : MonoBehaviour
 
     void AddBoid()
     {
-        m_boids.Add(schools[0].SpawnFish());
+        if (spawnProp != null)
+        {
+            Vector3 spawnPos = GetWorldPositionOnPlane(spawnProp.position);
+            spawnPos.z *= -1;
+            m_boids.Add(schools[0].SpawnFish(spawnPos));
+
+        } else
+        {
+
+        m_boids.Add(schools[0].SpawnFish(Vector3.zero));
+        }
     }
 
     public Vector3 GetWorldPositionOnPlane(Vector3 screenPosition)

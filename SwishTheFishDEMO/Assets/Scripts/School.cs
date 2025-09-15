@@ -103,14 +103,15 @@ public class School : MonoBehaviour
     {
         for (int i = 0; i < m_numFish; ++i)
         {
-            var boid = SpawnFish();
+            var boid = SpawnFish(Vector3.zero);
             yield return boid;
         }
     }
 
-    public Boid SpawnFish()
+    public Boid SpawnFish(Vector3 spawnPos)
     {
-        Vector3 spawnPoint = transform.position + m_spawnRadius * Random.insideUnitSphere;
+        
+        Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : (Vector3)spawnPos;
 
         for (int j = 0; j < 3; ++j)
             spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
