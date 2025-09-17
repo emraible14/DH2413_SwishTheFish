@@ -249,11 +249,8 @@ public class TableManager : MonoBehaviour
                 }
                 packetQueue.Clear();
             }
-            if (OnTouch != null)
-            {
-            OnTouch(surfaceFingers, surfaceObjects);
-            }
-            // LogState();
+
+            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         }
     }
 }

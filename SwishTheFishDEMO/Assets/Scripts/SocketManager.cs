@@ -8,6 +8,14 @@ using NativeWebSocket;
 public class SocketManager : MonoBehaviour
 {
   private WebSocket _websocket;
+
+  public static string IPAddress = "192.168.0.194:3001";
+
+  public enum MessageTypes
+  {
+    FishAdded,
+    RemoveFish,
+  }
   
   public static bool Connected { get; private set; }
 
@@ -23,12 +31,13 @@ public class SocketManager : MonoBehaviour
     EventManager.CloseSocket -= CloseSocket;
   }
 
-  private async void ConnectSocket()
+  private async void ConnectSocket(object data)
   {
+    Debug.Log("Attempting to connect to: " + IPAddress);
     await _websocket.Connect();
   }
 
-  private async void CloseSocket()
+  private async void CloseSocket(object data)
   {
     await _websocket.Close();
   }
@@ -37,7 +46,7 @@ public class SocketManager : MonoBehaviour
   {
     Debug.Log("Connection open!");
     Connected = true;
-    EventManager.Dispatch(EventManager.Event.SocketConnect);
+    EventManager.Dispatch(new CustomEvent(EventManager.EventType.SocketConnect, null));
     _websocket.SendText("authenticate");
 
   }
@@ -46,13 +55,13 @@ public class SocketManager : MonoBehaviour
   {
     Debug.Log("Connection closed!");
     Connected = false;
-    EventManager.Dispatch(EventManager.Event.SocketClose);
+    EventManager.Dispatch(new CustomEvent(EventManager.EventType.SocketClose, null));
   }
 
   // Start is called before the first frame update
   private async void Start()
   {
-    _websocket = new WebSocket("ws://192.168.0.194:3001");
+    _websocket = new WebSocket("ws://" + IPAddress);
 
     _websocket.OnOpen += OnSocketConnect;
 
@@ -70,9 +79,10 @@ public class SocketManager : MonoBehaviour
 
       // getting the message as a string
       var message = System.Text.Encoding.UTF8.GetString(bytes);
-      if (message == "fishAdded")
+      var messageObject = JsonUtility.FromJson<SocketMessage>(message);
+      if (messageObject.type == MessageTypes.FishAdded)
       {
-        EventManager.Dispatch(EventManager.Event.AddFish);
+        EventManager.Dispatch(new CustomEvent(EventManager.EventType.AddFish, messageObject.data));
       }
       Debug.Log("OnMessage! " + message);
     };
