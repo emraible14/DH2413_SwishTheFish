@@ -12,7 +12,7 @@ public class ObjectInput
     // The actual marker id
     public int tagValue { get; }
 
-    public Vector2 position { get; private set; }
+    public Vector2 position { get;  set; }
 
     public float orientation { get; private set; }
     public Vector2 velocity { get; private set; }

@@ -48,17 +48,32 @@ public class BoidManager : MonoBehaviour
     {
         if (objectInputs.Count > 0)
         {
+            var matchedAnyButSpawn = false;
+            var matchedSpawn = false;
             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-            { 
-                if (entry.Value.tagValue == 4)
+            {
+                if (entry.Value.tagValue == TableManager.SpawnPropId)
                 {
                     spawnProp = entry.Value;
+                    matchedSpawn = true;
                 }
                 else
                 {
                     objectOnSurface = true;
                     objectInput = entry.Value;
+                    matchedAnyButSpawn = true;
                 }
+            }
+
+            if (!matchedAnyButSpawn)
+            {
+                objectInput = null;
+                objectOnSurface = false;
+            }
+
+            if (!matchedSpawn)
+            {
+                spawnProp = null;
             }
         }
         else
@@ -78,9 +93,11 @@ public class BoidManager : MonoBehaviour
 
     void AddBoid(object data)
     {
+        var fishData = (FishData)data;
+        
         if (spawnProp != null)
         {
-            Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
+            Vector3 spawnPos = Helpers.GetWorldPositionOnPlane(camera, spawnProp.position);
             m_boids.Add(schools[0].SpawnFish(spawnPos));
 
         } else
@@ -93,14 +110,13 @@ public class BoidManager : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            Debug.Log("Adding fish");
-            AddBoid(null);
+            EventManager.Dispatch(new CustomEvent(EventManager.EventType.AddFish, null));
         }
 
         Vector3 propPosition = Vector3.zero;
         if (objectOnSurface)
         {
-            propPosition = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, objectInput.position));
+            propPosition = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
         }
         
         foreach (Boid boid in m_boids)

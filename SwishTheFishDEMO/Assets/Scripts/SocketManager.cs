@@ -9,8 +9,6 @@ public class SocketManager : MonoBehaviour
 {
   private WebSocket _websocket;
 
-  public static string IPAddress = "192.168.0.194:3001";
-
   public enum MessageTypes
   {
     FishAdded,
@@ -33,13 +31,15 @@ public class SocketManager : MonoBehaviour
 
   private async void ConnectSocket(object data)
   {
-    Debug.Log("Attempting to connect to: " + IPAddress);
-    await _websocket.Connect();
+    var ipAddress = (String)data;
+    Debug.Log("Attempting to connect to: " + ipAddress);
+    await InitSocket(ipAddress).Connect();
   }
 
   private async void CloseSocket(object data)
   {
     await _websocket.Close();
+    _websocket = null;
   }
 
   private void OnSocketConnect()
@@ -57,18 +57,14 @@ public class SocketManager : MonoBehaviour
     Connected = false;
     EventManager.Dispatch(new CustomEvent(EventManager.EventType.SocketClose, null));
   }
-
-  // Start is called before the first frame update
-  private async void Start()
+  
+  private WebSocket InitSocket(string ipAddress)
   {
-    _websocket = new WebSocket("ws://" + IPAddress);
+    _websocket = new WebSocket("ws://" + ipAddress);
 
     _websocket.OnOpen += OnSocketConnect;
 
-    _websocket.OnError += (e) =>
-    {
-      Debug.Log("Error! " + e);
-    };
+    _websocket.OnError += (e) => { Debug.Log("Error! " + e); };
 
     _websocket.OnClose += OnSocketClose;
 
@@ -79,29 +75,28 @@ public class SocketManager : MonoBehaviour
 
       // getting the message as a string
       var message = System.Text.Encoding.UTF8.GetString(bytes);
+
       var messageObject = JsonUtility.FromJson<SocketMessage>(message);
       if (messageObject.type == MessageTypes.FishAdded)
       {
         EventManager.Dispatch(new CustomEvent(EventManager.EventType.AddFish, messageObject.data));
       }
+
       Debug.Log("OnMessage! " + message);
     };
 
-    // Keep sending messages at every 0.3s
-    // InvokeRepeating("SendWebSocketMessage", 0.0f, 0.3f);
-
-    // waiting for messages
+    return _websocket;
   }
 
   private void Update()
   {
     #if !UNITY_WEBGL || UNITY_EDITOR
-      if (_websocket.State == WebSocketState.Open)
+      if (_websocket != null && _websocket.State == WebSocketState.Open)
       {
         // Sending bytes
         // websocket.Send(bytes);
-      }
       _websocket.DispatchMessageQueue();
+      }
     #endif
   }
 
@@ -119,6 +114,7 @@ public class SocketManager : MonoBehaviour
 
   private async void OnApplicationQuit()
   {
+    if (_websocket == null) return;
     await _websocket.Close();
   }
 
