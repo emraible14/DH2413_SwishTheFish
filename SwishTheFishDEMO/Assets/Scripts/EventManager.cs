@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
-    public enum Event
+    public enum EventType
     {
         AddFish,
         ConnectSocket,
@@ -13,54 +13,54 @@ public class EventManager : MonoBehaviour
         SurfaceTouched,
     }
      
-    public delegate void AddFishAction();
+    public delegate void AddFishAction(object data);
     public static event AddFishAction OnFishAdded;
 
-    public delegate void ConnectSocketAction();
+    public delegate void ConnectSocketAction(object data);
     public static event ConnectSocketAction ConnectSocket;
 
-    public delegate void CloseSocketAction();
+    public delegate void CloseSocketAction(object data);
     public static event CloseSocketAction CloseSocket;
     
-    public delegate void SocketConnectAction();
+    public delegate void SocketConnectAction(object data);
     public static event SocketConnectAction OnSocketConnect;
 
-    public delegate void SocketCloseAction();
+    public delegate void SocketCloseAction(object data);
     public static event SocketCloseAction OnSocketClosed;
 
-    public delegate void SurfaceTouchedAction();
+    public delegate void SurfaceTouchedAction(object data);
     public static event SurfaceTouchedAction OnSurfaceTouched;
 
-    public static void Dispatch(Event eventType)
+    public static void Dispatch(CustomEvent eEvent)
     {
-        switch (eventType)
+        switch (eEvent.type)
         {
-            case Event.AddFish:
+            case EventType.AddFish:
                 if (OnFishAdded == null) return;
-                OnFishAdded();
+                OnFishAdded(eEvent.data);
                 break;
-            case Event.ConnectSocket:
+            case EventType.ConnectSocket:
                 if (ConnectSocket == null) return;
-                ConnectSocket();
+                ConnectSocket(eEvent.data);
                 break;
-            case Event.CloseSocket:
+            case EventType.CloseSocket:
                 if (CloseSocket == null) return;
-                CloseSocket();
+                CloseSocket(eEvent.data);
                 break;
-            case Event.SocketConnect:
+            case EventType.SocketConnect:
                 if (OnSocketConnect == null) return;
-                OnSocketConnect();
+                OnSocketConnect(eEvent.data);
                 break;
-            case Event.SocketClose:
+            case EventType.SocketClose:
                 if (OnSocketClosed == null) return;
-                OnSocketClosed();
+                OnSocketClosed(eEvent.data);
                 break;
-            case Event.SurfaceTouched:
+            case EventType.SurfaceTouched:
                 if (OnSurfaceTouched == null) return;
-                OnSurfaceTouched();
+                OnSurfaceTouched(eEvent.data);
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null);
+                throw new ArgumentOutOfRangeException(nameof(eEvent.type), eEvent.type, null);
         }
     }
 }

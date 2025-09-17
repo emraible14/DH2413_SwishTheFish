@@ -33,24 +33,26 @@ public class CanvasManager : MonoBehaviour
     
     private void ConnectSocket()
     {
-        EventManager.Dispatch(SocketManager.Connected
-            ? EventManager.Event.CloseSocket
-            : EventManager.Event.ConnectSocket);
+        var eEvent = SocketManager.Connected
+            ? new CustomEvent(EventManager.EventType.CloseSocket, null)
+            : new CustomEvent(EventManager.EventType.ConnectSocket, null);
+        
+        EventManager.Dispatch(eEvent);
     }
 
-    void UpdateSocketText()
+    void UpdateSocketText(object data)
     {
         socketStatus.text = "Connected";
         connectButton.GetComponentInChildren<TextMeshProUGUI>().text = "Disconnect";
     }
 
-    void UpdateSocketTextClosed()
+    void UpdateSocketTextClosed(object data)
     {
         socketStatus.text = "Not connected";
         connectButton.GetComponentInChildren<TextMeshProUGUI>().text = "Connect";
     }
 
-    void UpdateText()
+    void UpdateText(object data)
     {
         fishAmountText.text = boidManager.GetNumBoids().ToString() + " fishes";
     }

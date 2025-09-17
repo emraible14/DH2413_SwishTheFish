@@ -76,7 +76,7 @@ public class BoidManager : MonoBehaviour
         return m_boids.Count < 1 ? 0 : m_boids.Count();
     }
 
-    void AddBoid()
+    void AddBoid(object data)
     {
         if (spawnProp != null)
         {
@@ -94,7 +94,7 @@ public class BoidManager : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             Debug.Log("Adding fish");
-            AddBoid();
+            AddBoid(null);
         }
 
         Vector3 propPosition = Vector3.zero;
