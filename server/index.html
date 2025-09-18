@@ -146,7 +146,7 @@
 
       function connect() {
         try {
-          ws = new WebSocket("ws://130.229.164.177:3001");
+          ws = new WebSocket("ws://localhost:3001");
 
           ws.onopen = function () {
             updateStatus(true);

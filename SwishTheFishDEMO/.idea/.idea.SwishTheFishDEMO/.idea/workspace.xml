@@ -6,10 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="8f5ae237-83d7-41a5-a6e0-fdc9e2f12d7c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SwishTheFishDEMO/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SwishTheFishDEMO/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Boid.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Boid.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/BoidManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/BoidManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/CanvasManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CanvasManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EventManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EventManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/ObjectInput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ObjectInput.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PropCursor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PropCursor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/School.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/School.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/SocketManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SocketManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TableManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/VFX/WaterEffect.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/VFX/WaterEffect.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,10 +41,12 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file:///Applications/Unity/Hub/Editor/2019.2.4f1/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.ugui/Runtime/UI/Core/Button.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/779c3264bab344d7ba21ce961e9486dd71de00/e5/bc0d0b9e/MessageType.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/992585620d64427198ddf3a0e146773313e400/9f/f1992642/Queue`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Event.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/FishData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Helpers.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -113,13 +122,14 @@
       <option name="presentableId" value="Default" />
       <updated>1757691619767</updated>
       <workItem from="1757691621010" duration="1051000" />
-      <workItem from="1757959485303" duration="7198000" />
+      <workItem from="1757959485303" duration="20619000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
   <component name="UnityProjectDiscoverer">
     <option name="hasUnityReference" value="true" />

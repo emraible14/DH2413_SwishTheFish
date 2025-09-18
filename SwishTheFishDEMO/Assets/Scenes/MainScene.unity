@@ -1290,7 +1290,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 100, y: 20, z: 50}
+  m_Size: {x: 120, y: 30, z: 70}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1006458015
 MonoBehaviour:
@@ -1311,15 +1311,15 @@ MonoBehaviour:
   m_bounds: {fileID: 1006458014}
   m_boundsForceFactor: 5
   m_cohesionForceFactor: 1
-  m_cohesionRadius: 3
+  m_cohesionRadius: 9
   m_separationForceFactor: 1
   m_separationRadius: 9
   m_alignmentForceFactor: 1
-  m_alignmentRadius: 3
+  m_alignmentRadius: 9
   m_maxSpeed: 8
   m_minSpeed: 4
   m_drag: 0.1
-  propPullDistance: 10
+  propPullDistance: 15
 --- !u!4 &1006458016
 Transform:
   m_ObjectHideFlags: 0

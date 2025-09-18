@@ -11,6 +11,8 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI socketStatus;
     [SerializeField] private Button connectButton;
     [SerializeField] private TMP_InputField ipInputField;
+
+    private string ipAddressInput = "localhost:3001";
     
     void OnEnable()
     {
@@ -19,6 +21,8 @@ public class CanvasManager : MonoBehaviour
         EventManager.OnSocketClosed += UpdateSocketTextClosed;
         connectButton.onClick.AddListener(ConnectSocket);
         ipInputField.onEndEdit.AddListener(IPAddressEditEnd);
+
+        fishAmountText.text = FindObjectOfType<School>().GetNumFish() + " fish";
     }
 
 
@@ -30,12 +34,17 @@ public class CanvasManager : MonoBehaviour
         connectButton.onClick.RemoveListener(ConnectSocket);
         ipInputField.onEndEdit.RemoveListener(IPAddressEditEnd);
     }
-    
+
+    private void Start()
+    {
+        ipInputField.text = ipAddressInput;
+    }
+
     private void ConnectSocket()
     {
         var eEvent = SocketManager.Connected
             ? new CustomEvent(EventManager.EventType.CloseSocket, null)
-            : new CustomEvent(EventManager.EventType.ConnectSocket, null);
+            : new CustomEvent(EventManager.EventType.ConnectSocket, ipAddressInput);
         
         EventManager.Dispatch(eEvent);
     }
@@ -54,12 +63,12 @@ public class CanvasManager : MonoBehaviour
 
     void UpdateText(object data)
     {
-        fishAmountText.text = boidManager.GetNumBoids().ToString() + " fishes";
+        fishAmountText.text = boidManager.GetNumBoids() + " fish";
     }
 
     void IPAddressEditEnd(string ipAddress)
     {
         Debug.Log(ipAddress);
-        SocketManager.IPAddress = ipAddress;
+        ipAddressInput = ipAddress;
     }
 }

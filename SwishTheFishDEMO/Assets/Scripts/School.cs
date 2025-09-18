@@ -7,6 +7,11 @@ public class School : MonoBehaviour
     [SerializeField]
     private int m_numFish = 50;
 
+    public int GetNumFish()
+    {
+        return m_numFish;
+    }
+
     [SerializeField]
     private Boid m_fishPrefab = null;
 

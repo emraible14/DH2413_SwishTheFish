@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 
 public class Boid : MonoBehaviour 
 {
-    private EventManager eventManager;
     public School School { get; set; }
 
     public Vector3 Position;
@@ -25,7 +26,7 @@ public class Boid : MonoBehaviour
         Acceleration += (Vector3)School.GetForceFromBounds(this);
         Acceleration += GetConstraintSpeedForce();
         Acceleration += GetSteeringForce();
-        Acceleration += PropPullForce(objectInput, objectOnSurface) * 2;
+        Acceleration += PropPullForce(objectInput, objectOnSurface);
             
 
         //Step simulation
@@ -38,9 +39,11 @@ public class Boid : MonoBehaviour
         var force = Vector3.zero;
         if (!objectOnSurface) return force;
         
-        var distance = propPosition - Position;
-        if (distance.magnitude > School.PropPullDistance) return force;
+        var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
+
+        if (distanceXZ.magnitude > School.PropPullDistance) return force;
         
+        var distance = propPosition - Position;
         force += distance;
             
         if (Velocity.magnitude > 0.1 && distance.magnitude < 2)
@@ -146,28 +149,8 @@ public class Boid : MonoBehaviour
         return force;
     }
 
-    // private Vector3 ClampToViewPortBounds(Vector3 vector)
-    // {
-    //     // var viewportPos = _camera.WorldToViewportPoint(vector);
-    //     //
-    //     // if (viewportPos.x > 1)
-    //     // {
-    //     //     viewportPos.x = 0;
-    //     // }
-    //     // else if (viewportPos.x < 0)
-    //     // {
-    //     //     viewportPos.x = 1;
-    //     // }
-    //     //
-    //     // if (viewportPos.y > 1)
-    //     // {
-    //     //     viewportPos.y = 0;
-    //     // }
-    //     // else if (viewportPos.y < 0)
-    //     // {
-    //     //     viewportPos.y = 1;
-    //     // }
-    //     //
-    //     // // return _camera.ViewportToWorldPoint(viewportPos);
-    // }
+    private void OnDrawGizmos()
+    {
+        // Gizmos.DrawWireSphere(transform.position, School.AlignmentRadius);
+    }
 }

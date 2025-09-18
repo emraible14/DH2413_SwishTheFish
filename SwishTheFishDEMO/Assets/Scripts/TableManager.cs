@@ -15,7 +15,11 @@ public class TableManager : MonoBehaviour
     private static TableManager _instance;
 
     public static TableManager Instance { get { return _instance; } }
-
+    
+    public static int SpawnPropId = 4;
+    public static int PullPropId = 0;
+    public static int MouseId = 100;
+    
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -189,7 +193,7 @@ public class TableManager : MonoBehaviour
                     int tagValue = (int)msg.Values[2];
 
                     float x = (float)msg.Values[3];
-                    float y = (float)msg.Values[4];
+                    float y = (float)msg.Values[4] * -1;
                     Vector2 position = new Vector2(x, y);
 
                     float orientation = (float)msg.Values[5];
@@ -220,7 +224,14 @@ public class TableManager : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        listenerThread.Abort();
+        try
+        {
+            listenerThread.Abort();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
         client.Close();
     }
 
@@ -250,6 +261,25 @@ public class TableManager : MonoBehaviour
                 packetQueue.Clear();
             }
 
+            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
+        } else if(Input.GetKey(KeyCode.Mouse0))
+        {
+            surfaceObjects.TryGetValue(100, out var surfaceObject);
+            var viewportMousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            if (surfaceObject == null)
+            {
+                surfaceObject = new ObjectInput(100, 100, viewportMousePos, 0, Vector3.zero, 0, 0, 0);
+                surfaceObjects.Add(100, surfaceObject);
+            }
+            else
+            {
+                surfaceObject.position = viewportMousePos;
+            }
+            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
+        }
+        else if (surfaceObjects.ContainsKey(100))
+        {
+            surfaceObjects.Remove(100);
             OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         }
     }
