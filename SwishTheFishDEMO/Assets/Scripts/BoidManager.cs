@@ -93,14 +93,15 @@ public class BoidManager : MonoBehaviour
 
     void AddBoid(object data)
     {
-        var fishData = (FishData)data;
-        
+        var fishData = (FishData)data; 
+        Debug.Log("data: " + fishData.color);
         if (spawnProp != null)
         {
             Vector3 spawnPos = Helpers.GetWorldPositionOnPlane(camera, spawnProp.position);
             m_boids.Add(schools[0].SpawnFish(spawnPos));
 
-        } else
+        }
+        else
         {
             m_boids.Add(schools[0].SpawnFish(Vector3.zero));
         }

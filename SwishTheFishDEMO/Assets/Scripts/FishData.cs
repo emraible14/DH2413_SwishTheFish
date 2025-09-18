@@ -11,5 +11,5 @@ public class FishData
     public int bodyId { get; }
     public int tailId { get; }
     
-    public string modelColor { get; }
+    public string color { get; }
 }

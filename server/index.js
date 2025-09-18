@@ -40,6 +40,16 @@ function addFish(ws) {
   }
 }
 
+function addFishConfig(ws, configData) {
+    numFish++;
+    console.log('addFishConfig');
+    ws.send('fishAdded');
+    if (unityClient) {
+      console.log(configData)
+      unityClient.send(configData);
+    }
+  }
+
 function removeFish(ws) {
   numFish--;
   ws.send("fishRemoved");
@@ -54,6 +64,8 @@ wss.on("connection", function (ws) {
       console.log("string received from client -> '" + data + "'");
       if (data === "addFish") {
         addFish(ws);
+      } else if (data[0] === "{") {
+        addFishConfig(ws, data);
       } else if (data === "removeFish") {
         removeFish(ws);
       } else if (data === "authenticate") {
