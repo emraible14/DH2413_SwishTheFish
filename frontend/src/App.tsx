@@ -84,7 +84,7 @@ function App() {
         // ws.send("addFish");
         ws.send(JSON.stringify({
             type: "fishAdded",
-            data: config,
+            data: JSON.stringify(config),
         }));
         console.log(`Sent: addFish`, "sent");
         setViewState(0);

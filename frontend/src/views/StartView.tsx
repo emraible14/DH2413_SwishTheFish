@@ -23,7 +23,7 @@ function StartView(props: StartViewProps) {
         <CardContent className='flex flex-col items-center'>
           <div className='flex flex-col align-middle items-center gap-2'>
             <div>
-            <img src="src/assets/logo.png" height={150} width={150}></img>
+            <img src="/logo.png" height={150} width={150}></img>
             </div>
             <div>
             <h1><b>Swish the Fish!</b></h1>

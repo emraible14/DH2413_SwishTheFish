@@ -10,11 +10,11 @@ export function CompleteFish(props: any) {
   return (
     <group {...props} dispose={null}>
       <group position={[0, 0, 3.27]}>
-        <mesh geometry={nodes.Sphere001_1.geometry} material={materials['Material.003']}/>
-        <mesh geometry={nodes.Sphere001_2.geometry} material={materials['Material.004']} />
-        <mesh geometry={nodes.Sphere001_3.geometry} material={materials['Material.005']} material-color={props.material_color}/>
-        <mesh geometry={nodes.Sphere001_4.geometry} material={materials['Material.001']} material-color={props.material_color}/>
-        <mesh geometry={nodes.Sphere001_5.geometry} material={materials['Material.002']} material-color={props.material_color}/>
+        <mesh geometry={(nodes.Sphere001_1 as any).geometry} material={materials['Material.003']}/>
+        <mesh geometry={(nodes.Sphere001_2 as any).geometry} material={materials['Material.004']} />
+        <mesh geometry={(nodes.Sphere001_3 as any).geometry} material={materials['Material.005']} material-color={props.material_color}/>
+        <mesh geometry={(nodes.Sphere001_4 as any).geometry} material={materials['Material.001']} material-color={props.material_color}/>
+        <mesh geometry={(nodes.Sphere001_5 as any).geometry} material={materials['Material.002']} material-color={props.material_color}/>
       </group>
     </group>
   )

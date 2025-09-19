@@ -32,27 +32,14 @@ for (const name of Object.keys(nets)) {
   }
 }
 
-function addFish(ws) {
-  numFish++;
-  ws.send("fishAdded");
-  if (unityClient) {
-    unityClient.send("fishAdded");
-  }
-}
-
 function addFishConfig(ws, configData) {
-    numFish++;
-    console.log('addFishConfig');
-    ws.send('fishAdded');
-    if (unityClient) {
-      console.log(configData)
-      unityClient.send(configData);
-    }
+  numFish++;
+  console.log('addFishConfig');
+  ws.send('fishAdded');
+  if (unityClient) {
+    console.log(configData)
+    unityClient.send(configData);
   }
-
-function removeFish(ws) {
-  numFish--;
-  ws.send("fishRemoved");
 }
 
 wss.on("connection", function (ws) {
@@ -62,14 +49,10 @@ wss.on("connection", function (ws) {
     if (typeof data === "string") {
       // client sent a string
       console.log("string received from client -> '" + data + "'");
-      if (data === "addFish") {
-        addFish(ws);
-      } else if (data[0] === "{") {
-        addFishConfig(ws, data);
-      } else if (data === "removeFish") {
-        removeFish(ws);
-      } else if (data === "authenticate") {
+      if (data === "authenticate") {
         unityClient = ws;
+      } else if (JSON.parse(data).type === "fishAdded") {
+        addFishConfig(ws, data);
       }
     } else {
       console.log(
