@@ -9,9 +9,9 @@ export function Head(props: any) {
   const { nodes, materials } = useGLTF('/head1.glb');
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.Sphere001_1.geometry} material={materials['Material.003']} />
-      <mesh geometry={nodes.Sphere001_2.geometry} material={materials['Material.004']} />
-      <mesh geometry={nodes.Sphere001_3.geometry} material={materials['Material.002']} material-color={props.material_color}/>
+      <mesh geometry={(nodes.Sphere001_1 as any).geometry} material={materials['Material.003']} />
+      <mesh geometry={(nodes.Sphere001_2 as any).geometry} material={materials['Material.004']} />
+      <mesh geometry={(nodes.Sphere001_3 as any).geometry} material={materials['Material.002']} material-color={props.material_color}/>
     </group>
   )
 }

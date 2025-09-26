@@ -9,7 +9,7 @@ export function Tail(props: any) {
   const { nodes, materials } = useGLTF('/tail1.glb')
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.Cone.geometry} material={materials['Material.001']} material-color={props.material_color} rotation={[-Math.PI / 2, 0, 0]} scale={[0.6, 1, 0.6]} />
+      <mesh geometry={(nodes.Cone as any).geometry} material={materials['Material.001']} material-color={props.material_color} rotation={[-Math.PI / 2, 0, 0]} scale={[0.6, 1, 0.6]} />
     </group>
   )
 }

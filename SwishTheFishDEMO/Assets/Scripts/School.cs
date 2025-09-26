@@ -115,12 +115,12 @@ public class School : MonoBehaviour
     {
         for (int i = 0; i < m_numFish; ++i)
         {
-            var boid = SpawnFish(Vector3.zero);
+            var boid = SpawnFish(Vector3.zero, Color.red);
             yield return boid;
         }
     }
 
-    public Boid SpawnFish(Vector3 spawnPos)
+    public Boid SpawnFish(Vector3 spawnPos, Color fishColor)
     {
         
         Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
@@ -129,6 +129,20 @@ public class School : MonoBehaviour
             spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
 
         Boid boid = Instantiate(m_fishPrefab, spawnPoint, m_fishPrefab.transform.rotation) as Boid;
+
+        MeshRenderer[] renderers = boid.GetComponentsInChildren<MeshRenderer>();
+        foreach (MeshRenderer rend in renderers)
+        {
+            foreach (Material mat in rend.materials)
+            {
+                if (mat.name != "Material.003 (Instance)" && mat.name != "Material.004 (Instance)")
+                {
+                    // Debug.Log(mat.name);
+                    mat.color = fishColor;  // change this to your desired color
+                }
+            }
+        }
+
         boid.Position = spawnPoint;
         boid.Velocity = Random.insideUnitSphere;
         boid.School = this;

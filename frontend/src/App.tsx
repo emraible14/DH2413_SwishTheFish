@@ -20,7 +20,7 @@ function App() {
 
   function connect() {
     try {
-      ws = new WebSocket("ws://192.168.50.129:3001");
+      ws = new WebSocket("ws://localhost:3001");
 
       ws.onopen = function () {
         console.log("Connected to WebSocket server", "received");
@@ -81,7 +81,11 @@ function App() {
     if (config) {
       console.log(config);
       if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send("addFish");
+        // ws.send("addFish");
+        ws.send(JSON.stringify({
+            type: "fishAdded",
+            data: JSON.stringify(config),
+        }));
         console.log(`Sent: addFish`, "sent");
         setViewState(0);
       }

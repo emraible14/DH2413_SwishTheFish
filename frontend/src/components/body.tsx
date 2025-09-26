@@ -7,9 +7,11 @@ import { useGLTF } from '@react-three/drei'
 
 export function Body(props: any) {
   const { nodes, materials } = useGLTF('/body1.glb')
+
+  console.log(nodes.Cylinder002)
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.Cylinder002.geometry} material={materials['Material.001']} material-color={props.material_color} rotation={[Math.PI / 2, 0, 1.728]} scale={[0.713, 0.295, 0.2]} />
+      <mesh geometry={(nodes.Cylinder002 as any).geometry} material={materials['Material.001']} material-color={props.material_color} rotation={[Math.PI / 2, 0, 1.728]} scale={[0.713, 0.295, 0.2]} />
     </group>
   )
 }

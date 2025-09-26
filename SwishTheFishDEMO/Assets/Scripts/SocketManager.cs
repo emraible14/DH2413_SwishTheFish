@@ -70,19 +70,16 @@ public class SocketManager : MonoBehaviour
 
     _websocket.OnMessage += (bytes) =>
     {
-      Debug.Log("OnMessage!");
-      Debug.Log(bytes);
-
       // getting the message as a string
       var message = System.Text.Encoding.UTF8.GetString(bytes);
+      Debug.Log("OnMessage! " + message);
 
       var messageObject = JsonUtility.FromJson<SocketMessage>(message);
       if (messageObject.type == MessageTypes.FishAdded)
       {
+        Debug.Log("Data! " + messageObject.data);
         EventManager.Dispatch(new CustomEvent(EventManager.EventType.AddFish, messageObject.data));
       }
-
-      Debug.Log("OnMessage! " + message);
     };
 
     return _websocket;

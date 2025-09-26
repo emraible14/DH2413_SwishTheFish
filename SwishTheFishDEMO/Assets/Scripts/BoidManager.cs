@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 public class BoidManager : MonoBehaviour
@@ -93,16 +94,33 @@ public class BoidManager : MonoBehaviour
 
     void AddBoid(object data)
     {
-        var fishData = (FishData)data;
+
+        Color fishColor = Color.red;
+
+        if (data != null)
+        {
+            FishData fish = JsonUtility.FromJson<FishData>((string)data);
+
+            // some gross stuff to convert the hex to rgb
+            string hex = fish.color;
+            hex = hex.Replace("#", "");//in case the string is formatted #FFFFFF
+            byte a = 255;//assume fully visible unless specified in hex
+            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+            fishColor = new Color(r/255f, g/255f, b/255f, a/255f);
+        }
         
         if (spawnProp != null)
         {
             Vector3 spawnPos = Helpers.GetWorldPositionOnPlane(camera, spawnProp.position);
-            m_boids.Add(schools[0].SpawnFish(spawnPos));
+            m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor));
 
-        } else
+        }
+        else
         {
-            m_boids.Add(schools[0].SpawnFish(Vector3.zero));
+            m_boids.Add(schools[0].SpawnFish(Vector3.zero, fishColor));
         }
     }
 

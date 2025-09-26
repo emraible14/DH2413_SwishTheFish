@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class FishData
 {
-    public string id { get; }
-    public int deviceId { get; }
-    
-    public int headId { get; }
-    public int bodyId { get; }
-    public int tailId { get; }
-    
-    public string modelColor { get; }
+    public string id;
+    public int deviceId;
+
+    public int headId;
+    public int bodyId;
+    public int tailId;
+
+    public string color;
 }
