@@ -21,7 +21,6 @@ public class PropCursor : MonoBehaviour
             {
                 if (entry.Value.tagValue == TableManager.MouseId || entry.Value.tagValue == TableManager.PullPropId)
                 {
-                    Debug.Log("Matched");
                     objectInput = entry.Value;
                     matchedTagValue = true;
                 }
