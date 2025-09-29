@@ -1,85 +1,78 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import type { FishConfig } from './utils/types';
 import FishDesignerView from './views/FishDesignerView';
 import StartView from './views/StartView';
-import FinalView from './views/FinalView';
+import SelectDeviceView from './views/SelectDeviceView';
+import SwipeView from './views/SwipeView';
 
 function App() {
 
   const [viewState, setViewState] = useState(0);
-  const [config, setConfig] = useState<FishConfig>({
+
+  const defaultFish: FishConfig = {
     tailId: 0,
     bodyId: 0,
     headId: 0,
     color: '#000000',
     deviceId: null,
-  });
+  };
+  const [config, setConfig] = useState<FishConfig>(defaultFish);
 
-  let ws: WebSocket | null = null;
+  const [ws, setWs] = useState<WebSocket | null>(null);
 
-  function connect() {
-    try {
-      ws = new WebSocket("ws://localhost:3001");
+  useEffect(() => {
+    const websocket = new WebSocket("ws://130.229.182.30:3001");
+    setWs(websocket)
 
-      ws.onopen = function () {
-        console.log("Connected to WebSocket server", "received");
-      };
+    websocket.onopen = function () {
+      console.log("Connected to WebSocket server", "received");
+    };
 
-      ws.onmessage = function (event) {
-        if (typeof event.data === "string") {
-          console.log(`Received: ${event.data}`, "received");
-        } else {
-          // Handle binary data
-          const bytes = Array.from(new Uint8Array(event.data));
-          console.log(`Received binary: [${bytes.join(", ")}]`, "received");
-        }
-      };
+    websocket.onmessage = function (event) {
+      if (typeof event.data === "string") {
+        console.log(`Received: ${event.data}`, "received");
+      } else {
+        // Handle binary data
+        const bytes = Array.from(new Uint8Array(event.data));
+        console.log(`Received binary: [${bytes.join(", ")}]`, "received");
+      }
+    };
 
-      ws.onclose = function () {
-        console.log("Disconnected from WebSocket server", "info");
-      };
+    websocket.onclose = function () {
+      console.log("Disconnected from WebSocket server", "info");
+    };
 
-      ws.onerror = function (error) {
-        const errorDetails = {
-          type: error.type || "WebSocket Error",
-          target: error.target ? "WebSocket" : "Unknown",
-          timeStamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-        };
-
-        console.log(`Error: Connection failed`, "info");
-        console.log(
-          `Error Details: ${JSON.stringify(errorDetails, null, 2)}`,
-          "info"
-        );
-      };
-    } catch (error) {
+    websocket.onerror = function (error) {
       const errorDetails = {
-        type: "Connection Error",
+        type: error.type || "WebSocket Error",
+        target: error.target ? "WebSocket" : "Unknown",
         timeStamp: new Date().toISOString(),
         userAgent: navigator.userAgent,
       };
-      console.log(error)
 
-      console.log(`Connection error: Unknown Error`, "info");
+      console.log(`Error: Connection failed`, "info");
       console.log(
         `Error Details: ${JSON.stringify(errorDetails, null, 2)}`,
         "info"
       );
-    }
-  }
+    };
+
+  }, []);
 
   function addFish(config: FishConfig) {
     setConfig(config);
-    console.log(config);
     setViewState(2);
+  }
+
+  function updateDevice(config: FishConfig) {
+    setConfig(config);
+    setViewState(3);
   }
 
   function submitFish(config: FishConfig) {
     setConfig(config);
     if (config) {
-      console.log(config);
       if (ws && ws.readyState === WebSocket.OPEN) {
         // ws.send("addFish");
         ws.send(JSON.stringify({
@@ -87,24 +80,25 @@ function App() {
             data: JSON.stringify(config),
         }));
         console.log(`Sent: addFish`, "sent");
-        setViewState(0);
       }
     }
   }
 
-  // Initialize
-  connect();
-
-  function getStarted() {
-    setViewState(1);
+  function returnHome() {
+    setViewState(0);
+    setConfig(defaultFish);
   }
 
   return (
     <>
-      {(viewState == 0) && <StartView getStarted={getStarted}/>}
-      {(viewState == 1) && <FishDesignerView addFish={addFish}></FishDesignerView>}
-      {(viewState == 2) && <FinalView submitFish={submitFish} config={config} connected={true}></FinalView>}
-    </>
+      <div className="p-1">
+        {(viewState == 0) && <StartView getStarted={() => setViewState(1)}/>}
+        {(viewState == 1) && <FishDesignerView config={config} addFish={addFish} goBack={() => setViewState(0)}></FishDesignerView>}
+        {(viewState == 2) && <SelectDeviceView config={config} connected={true} goBack={() => setViewState(1)} updateDevice={updateDevice}></SelectDeviceView>}
+        {(viewState == 3) && <SwipeView submitFish={submitFish} config={config} returnHome={returnHome}></SwipeView>}
+
+      </div>
+         </>
   )
 }
 
