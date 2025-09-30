@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = System.Object;
 
 [RequireComponent(typeof(MeshRenderer))]
 public class PropCursor : MonoBehaviour
@@ -12,8 +13,34 @@ public class PropCursor : MonoBehaviour
     private MeshRenderer meshRenderer;
     ObjectInput pushProp;
     ObjectInput pullProp;
+    ObjectInput mouseProp;
 
     private School _school;
+    
+    private bool fishIsColliding = false;
+    private float lastFishCollisionTime;
+
+    [Tooltip("Amount of time to reset fish collision")]
+    [SerializeField] private float collisionCooldown = 0.3f; 
+
+    private void OnEnable()
+    {
+        EventManager.OnFishCollision += EventManagerOnOnFishCollision;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnFishCollision -= EventManagerOnOnFishCollision;
+    }
+
+    private void EventManagerOnOnFishCollision(object data)
+    {
+        if (pullProp == null && mouseProp == null) return;
+        
+        fishIsColliding = true;
+        lastFishCollisionTime = Time.time;
+        if (meshRenderer.material.color != Color.red) meshRenderer.material.color = Color.red;
+    }
 
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
     {
@@ -38,12 +65,22 @@ public class PropCursor : MonoBehaviour
                 {
                     pullProp = null;
                 }
+
+                if (entry.Value.tagValue == TableManager.MouseId)
+                {
+                    mouseProp = entry.Value;
+                }
+                else
+                {
+                    mouseProp = null;
+                }
             }
         }
         else
         {
             pushProp = null;
             pullProp = null;
+            mouseProp = null;
         }
     }
 
@@ -60,13 +97,21 @@ public class PropCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Time.time - lastFishCollisionTime >= collisionCooldown)
+        {
+            fishIsColliding = false;
+        }
         
-        if (pullProp != null)
+        if ((pullProp != null || mouseProp != null))
         {
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            meshRenderer.material.color = Color.red;
-            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position, 50));
-            transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
+            if (!fishIsColliding) meshRenderer.material.color = Color.black;
+            transform.position = pullProp != null ? Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position, 50)) : Helpers
+                .GetWorldPositionOnPlane(camera, mouseProp.position, 50);
+            if (pullProp != null)
+            {
+                transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
+            }
             transform.localScale = new Vector3(6, 2, 2);
         }
         else if (pushProp != null)
@@ -76,6 +121,12 @@ public class PropCursor : MonoBehaviour
             transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pushProp.position));
             transform.localScale = new Vector3(5, 5, 5);
         }
+        // else if (mouseProp != null)
+        // {
+        //     if (!meshRenderer.enabled) meshRenderer.enabled = true;
+        //     meshRenderer.material.color = Color.yellow;
+        //     transform.position = Helpers.GetWorldPositionOnPlane(camera, mouseProp.position, 10);
+        // }
         else if (meshRenderer.enabled)
         {
             meshRenderer.enabled = false;

@@ -32,12 +32,16 @@ public class Boid : MonoBehaviour
         
         foreach (var prop in props.Where(prop => prop != null))
         {
-            if (prop.tagValue == TableManager.PullPropId || prop.tagValue == TableManager.MouseId)
+            if (prop.tagValue == TableManager.PullPropId)
             {
                 Acceleration += PropPullForce(Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(Camera, prop.position)));
             } else if (prop.tagValue == TableManager.PushPropId)
             {
                 Acceleration += PropRepelForce(Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(Camera, prop.position)));
+            }
+            else if (prop.tagValue == TableManager.MouseId)
+            {
+                Acceleration += PropPullForce(Helpers.GetWorldPositionOnPlane(Camera, prop.position));
             }
         }
         
@@ -52,15 +56,21 @@ public class Boid : MonoBehaviour
         
         var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
         
-        if (distanceXZ.magnitude > School.PropRepelDistance) return force;
+        if (distanceXZ.magnitude > School.PropPullDistance) return force;
         
         var distance = propPosition - Position;
+        distance = new Vector3(distance.x, 0, distance.z);
         force += distance * School.PropPullForce;
             
         if (Velocity.magnitude > 0.1 && distance.magnitude < 2)
         {
             Velocity *= 0.8f;
         }
+
+        if (distanceXZ.magnitude < School.PropVibrationMinDistance)
+        {
+            EventManager.Dispatch(new CustomEvent(EventManager.EventType.FishCollision, null));
+        };
         
         return force;
     }
@@ -71,7 +81,7 @@ public class Boid : MonoBehaviour
 
         var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
 
-        if (distanceXZ.magnitude > School.PropPullDistance) return force;
+        if (distanceXZ.magnitude > School.PropRepelDistance) return force;
 
         var distance = propPosition - Position;
         var normDistance = distance.normalized;

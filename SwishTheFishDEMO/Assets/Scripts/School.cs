@@ -37,8 +37,14 @@ public class School : MonoBehaviour
     public float PropPullDistance => propPullDistance;
 
     [SerializeField] private float propRepelDistance = 10f;
+
+    [Tooltip("Multiplicative force to the fish acceleration away from the repel prop")]
     [SerializeField] private float propRepelForce = 1f;
     public float PropRepelForce => propRepelForce;
+    
+    [Tooltip("Min distance to prop for vibration activation")]
+    [SerializeField] private float propVibrationMinDistance = 0.2f;
+    public float PropVibrationMinDistance => propVibrationMinDistance;
 
 
 

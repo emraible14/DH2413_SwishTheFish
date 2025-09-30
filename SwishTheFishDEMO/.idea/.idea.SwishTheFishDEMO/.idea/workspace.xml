@@ -9,14 +9,9 @@
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MainScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Boid.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Boid.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/BoidManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/BoidManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CanvasManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CanvasManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/ObjectInput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ObjectInput.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EventManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EventManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/PropCursor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PropCursor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/School.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/School.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/SocketManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SocketManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TableManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TableManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/VFX/WaterEffect.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/VFX/WaterEffect.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,20 +50,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;unity-cleanup&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="/Applications/Unity/Hub/Editor/2019.2.4f1/Unity.app/Contents/MacOS/Unity" />

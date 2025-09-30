@@ -61,14 +61,13 @@ public class BoidManager : MonoBehaviour
                 if (entry.Value.tagValue == TableManager.PushPropId)
                 {
                     pushProp = entry.Value;
-                    Debug.Log(Helpers.GetPropOrientationDeg(pushProp.orientation));
                 }
                 else
                 {
                     pushProp = null;
                 }
 
-                if (entry.Value.tagValue == TableManager.PullPropId)
+                if (entry.Value.tagValue == TableManager.PullPropId || entry.Value.tagValue == TableManager.MouseId)
                 {
                     pullProp = entry.Value;
                 }
@@ -77,17 +76,6 @@ public class BoidManager : MonoBehaviour
                     pullProp = null;
                 }
             }
-    
-             //if (!matchedAnyButSpawn)
-             //{
-             //   objectInput = null;
-             //    objectOnSurface = false;
-             //}
-    
-             //if (!matchedSpawn)
-             //{
-             //    spawnProp = null;
-             //}
          }
          else
          {

@@ -11,6 +11,7 @@ public class EventManager : MonoBehaviour
         SocketConnect,
         SocketClose,
         SurfaceTouched,
+        FishCollision,
     }
      
     public delegate void AddFishAction(object data);
@@ -30,6 +31,9 @@ public class EventManager : MonoBehaviour
 
     public delegate void SurfaceTouchedAction(object data);
     public static event SurfaceTouchedAction OnSurfaceTouched;
+    
+    public delegate void FishCollisionAction(object data);
+    public static event FishCollisionAction OnFishCollision;
 
     public static void Dispatch(CustomEvent eEvent)
     {
@@ -58,6 +62,10 @@ public class EventManager : MonoBehaviour
             case EventType.SurfaceTouched:
                 if (OnSurfaceTouched == null) return;
                 OnSurfaceTouched(eEvent.data);
+                break;
+            case EventType.FishCollision:
+                if (OnFishCollision == null) return;
+                OnFishCollision(eEvent.data);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(eEvent.type), eEvent.type, null);
