@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class School : MonoBehaviour
 {
     private Camera _camera;
-    
+
     [SerializeField]
     private int m_numFish = 50;
 
@@ -28,7 +28,7 @@ public class School : MonoBehaviour
     [SerializeField]
     private float m_boundsForceFactor = 5;
 
-    [Header("Prop interactions")] 
+    [Header("Prop interactions")]
     [SerializeField] private float propPullDistance = 10f;
     [Tooltip("Multiplicative force to the fish acceleration towards the pull prop")]
     [SerializeField] private float propPullForce = 1f;
@@ -142,45 +142,46 @@ public class School : MonoBehaviour
     }
 
 
-  private Boid CreateFishObject(Vector3 spawnPoint, Color fishColor, string fishId)
-  {
-    // Load correct resource based on fishId and add scripts
-    var loadedResource = Resources.Load<GameObject>("fish" + fishId);
-    var temp = Instantiate(loadedResource, spawnPoint, Quaternion.identity, this.transform);
-    temp.AddComponent<Boid>();
-    temp.AddComponent<Fish>();
-
-    Boid boid = temp.GetComponent<Boid>();
-
-    // update fish color
-    SkinnedMeshRenderer[] renderers = boid.GetComponentsInChildren<SkinnedMeshRenderer>();
-    foreach (SkinnedMeshRenderer rend in renderers)
+    private Boid CreateFishObject(Vector3 spawnPoint, Color fishColor, string fishId)
     {
-      foreach (Material mat in rend.materials)
-      {
-        mat.color = fishColor;
-      }
+        // Load correct resource based on fishId and add scripts
+        var loadedResource = Resources.Load<GameObject>("fish" + fishId);
+        var temp = Instantiate(loadedResource, spawnPoint, Quaternion.identity, this.transform);
+        temp.AddComponent<Boid>();
+        temp.AddComponent<Fish>();
+
+        Boid boid = temp.GetComponent<Boid>();
+
+        // update fish color
+        SkinnedMeshRenderer[] renderers = boid.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer rend in renderers)
+        {
+            foreach (Material mat in rend.materials)
+            {
+                mat.color = fishColor;
+            }
+        }
+
+        return boid;
     }
 
-    return boid;
-  }
+    public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
+    {
 
-  public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
-  {
+        Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
-    Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
+        for (int j = 0; j < 3; ++j)
+            spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
 
-    for (int j = 0; j < 3; ++j)
-      spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
+        Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
 
-    Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
-
-    boid.Position = spawnPoint;
-    boid.Velocity = Random.insideUnitSphere;
-    boid.School = this;
-    boid.transform.parent = this.transform;
-    return boid;
-  }
+        boid.Position = spawnPoint;
+        boid.Velocity = Random.insideUnitSphere;
+        boid.School = this;
+        boid.transform.parent = this.transform;
+        boid.Camera = _camera;
+        return boid;
+    }
 
     public Vector3 GetForceFromBounds(Boid boid)
     {
@@ -206,7 +207,7 @@ public class School : MonoBehaviour
         return -m_boundsForceFactor * force;
     }
 
-    void  OnDrawGizmos()
+    void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position, m_bounds.size);
