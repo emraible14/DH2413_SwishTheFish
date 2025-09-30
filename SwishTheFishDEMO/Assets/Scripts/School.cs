@@ -136,27 +136,51 @@ public class School : MonoBehaviour
     {
         for (int i = 0; i < m_numFish; ++i)
         {
-            var boid = SpawnFish(Vector3.zero, Color.red);
+            var boid = SpawnFish(Vector3.zero, Color.red, "112");
             yield return boid;
         }
     }
 
-    public Boid SpawnFish(Vector3 spawnPos, Color fishColor)
-    {
-        
-        Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
-        for (int j = 0; j < 3; ++j)
-            spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
-        
-        Boid boid = Instantiate(m_fishPrefab, spawnPoint, m_fishPrefab.transform.rotation);
-        boid.Position = spawnPoint;
-        boid.Velocity = Random.insideUnitSphere;
-        boid.School = this;
-        boid.transform.parent = this.transform;
-        boid.Camera = _camera;
-        return boid;
+  private Boid CreateFishObject(Vector3 spawnPoint, Color fishColor, string fishId)
+  {
+    // Load correct resource based on fishId and add scripts
+    var loadedResource = Resources.Load<GameObject>("fish" + fishId);
+    var temp = Instantiate(loadedResource, spawnPoint, Quaternion.identity, this.transform);
+    temp.AddComponent<Boid>();
+    temp.AddComponent<Fish>();
+
+    Boid boid = temp.GetComponent<Boid>();
+
+    // update fish color
+    SkinnedMeshRenderer[] renderers = boid.GetComponentsInChildren<SkinnedMeshRenderer>();
+    foreach (SkinnedMeshRenderer rend in renderers)
+    {
+      foreach (Material mat in rend.materials)
+      {
+        mat.color = fishColor;
+      }
     }
+
+    return boid;
+  }
+
+  public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
+  {
+
+    Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
+
+    for (int j = 0; j < 3; ++j)
+      spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
+
+    Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
+
+    boid.Position = spawnPoint;
+    boid.Velocity = Random.insideUnitSphere;
+    boid.School = this;
+    boid.transform.parent = this.transform;
+    return boid;
+  }
 
     public Vector3 GetForceFromBounds(Boid boid)
     {
