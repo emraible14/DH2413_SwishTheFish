@@ -30,7 +30,7 @@ function SwipeView(props: SwipeViewProps) {
             <h1><b>Swipe to Swish your Fish!</b></h1>
           </div>
         )}
-        <Canvas camera={{ position: [0, 20, 0], fov: 50 }}>
+        <Canvas camera={{ position: [0, 20, 0], fov: 75 }}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[5, 5, 5]} />
           <CompleteFishModel config={props.config} onSwimAway={() => {setShowReturnHome(true)}} onSwimStart={onSwimStart}/>

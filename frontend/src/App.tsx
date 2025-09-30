@@ -11,9 +11,9 @@ function App() {
   const [viewState, setViewState] = useState(0);
 
   const defaultFish: FishConfig = {
-    tailId: 0,
-    bodyId: 0,
-    headId: 0,
+    tailId: 2,
+    bodyId: 1,
+    headId: 1,
     color: '#000000',
     deviceId: null,
   };
@@ -22,7 +22,7 @@ function App() {
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const websocket = new WebSocket("ws://130.229.182.30:3001");
+    const websocket = new WebSocket("ws://130.229.180.45:3001");
     setWs(websocket)
 
     websocket.onopen = function () {

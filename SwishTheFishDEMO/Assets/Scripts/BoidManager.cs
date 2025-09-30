@@ -92,35 +92,42 @@ public class BoidManager : MonoBehaviour
         return m_boids.Count < 1 ? 0 : m_boids.Count();
     }
 
+    private Color GetColor(string hex)
+    {
+        hex = hex.Replace("#", "");//in case the string is formatted #FFFFFF
+        byte a = 255;//assume fully visible unless specified in hex
+        byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+        byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+        byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+        return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+    }
+
     void AddBoid(object data)
     {
 
+        // Default color and fish
         Color fishColor = Color.red;
+        string fishId = "112";
 
         if (data != null)
         {
+            Debug.Log((string)data);
             FishData fish = JsonUtility.FromJson<FishData>((string)data);
-
-            // some gross stuff to convert the hex to rgb
-            string hex = fish.color;
-            hex = hex.Replace("#", "");//in case the string is formatted #FFFFFF
-            byte a = 255;//assume fully visible unless specified in hex
-            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-
-            fishColor = new Color(r/255f, g/255f, b/255f, a/255f);
+            fishId = fish.headId + fish.bodyId + fish.tailId;
+            fishColor = GetColor(fish.color);
         }
         
         if (spawnProp != null)
         {
             Vector3 spawnPos = Helpers.GetWorldPositionOnPlane(camera, spawnProp.position);
-            m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor));
+            m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
 
         }
         else
         {
-            m_boids.Add(schools[0].SpawnFish(Vector3.zero, fishColor));
+            // Default zero location
+            m_boids.Add(schools[0].SpawnFish(Vector3.zero, fishColor, fishId));
         }
     }
 

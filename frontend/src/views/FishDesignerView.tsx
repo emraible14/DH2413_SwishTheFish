@@ -90,9 +90,9 @@ function FishDesignerView(props: FishDesignerProps) {
 
   function sendConfig() {
     const config: FishConfig = {
-      tailId: tailCarouselApi?.selectedScrollSnap() ?? 0,
-      bodyId: bodyCarouselApi?.selectedScrollSnap() ?? 0,
-      headId: headCarouselApi?.selectedScrollSnap() ?? 0,
+      tailId: tailCarouselApi?.selectedScrollSnap() ? tailCarouselApi?.selectedScrollSnap() + 2 : 0 + 2,
+      bodyId: bodyCarouselApi?.selectedScrollSnap() ? bodyCarouselApi?.selectedScrollSnap() + 3 : 0 + 3,
+      headId: headCarouselApi?.selectedScrollSnap() ? headCarouselApi?.selectedScrollSnap() + 3 : 0 + 3,
       color: color,
       deviceId: null,
     }
@@ -111,13 +111,13 @@ function FishDesignerView(props: FishDesignerProps) {
         <div className='flex flex-col justify-center items-center'>
           <Carousel className="w-60" setApi={setTailCarouselApi}>
             <CarouselContent>
-              {Array.from({ length: 3 }).map((_, index) => (
+              {Array.from({ length: 2 }).map((_, index) => (
                 <CarouselItem key={index}>
                   {index === tailIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[5, 5, 5]} />
                     <OverheadCamera />
-                    <SubFishModel color={color} componentPart='tail' componentId={index+3}/>
+                    <SubFishModel color={color} componentPart='tail' componentId={index+2}/>
                     {/* <Tail material_color={color} position={[0, 0, 2.2]}/> */}
                   </Canvas>}
                 </CarouselItem>
@@ -128,7 +128,7 @@ function FishDesignerView(props: FishDesignerProps) {
           </Carousel>
           <Carousel className="w-60" setApi={setBodyCarouselApi}>
             <CarouselContent>
-              {Array.from({ length: 4 }).map((_, index) => (
+              {Array.from({ length: 1 }).map((_, index) => (
                 <CarouselItem key={index}>
                   {index === bodyIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                     <ambientLight intensity={0.5} />

@@ -11,7 +11,11 @@ interface FishModelProps {
 }
 
 export function CompleteFishModel(props: FishModelProps) {
-  const { scene, materials } = useGLTF(`/complete${props.config.headId}${props.config.bodyId}${props.config.tailId}.glb`)
+  const { scene, materials } = useGLTF(`/fish${props.config.headId}${props.config.bodyId}${props.config.tailId}.glb`)
+  // If you want to find the armature explicitly:
+  const armature = scene.getObjectByName('Armature')
+  const tailBone = armature?.getObjectByName('tail'); 
+  const bodyBone = armature?.getObjectByName('body'); 
 
   useEffect(() => {
     Object.keys(materials).forEach((matName : string) => {
@@ -27,7 +31,24 @@ export function CompleteFishModel(props: FishModelProps) {
   const startTime = useRef<number | null>(null)
 
   useFrame((state) => {
-    if (!swimming || !props.onSwimAway) return
+    const t = state.clock.elapsedTime
+    // wiggle speed and amplitude
+    const frequency = 4   // how fast the fish wiggles
+    const tailAmp   = 0.2 // radians (~17°)
+    const bodyAmp = 0.05;
+
+    // bodyBone.rotation.z = Math.sin(t * frequency) * bodyAmp
+
+    // tail wiggle (stronger and phase-shifted to follow the body)
+    tailBone.rotation.z = Math.sin(t * frequency + Math.PI / 4) * tailAmp
+
+    // if (!swimming || !props.onSwimAway) return
+
+    if (!swimming || !props.onSwimAway) {
+      const wiggle = Math.sin(t * frequency) * 0.05 // 3° sway
+      fishRef.current.rotation.y = wiggle
+      return;
+    }
   
     if (startTime.current === null) startTime.current = state.clock.elapsedTime
     const elapsed = state.clock.elapsedTime - startTime.current
@@ -37,6 +58,9 @@ export function CompleteFishModel(props: FishModelProps) {
     const arcRadius = 2.5
     const arcLength = Math.PI * arcRadius // half circle length
     const arcDuration = arcLength / speed // time to complete arc
+
+    const lateralSway = Math.sin(t * frequency) * 0.05 // side-to-side wiggle
+    fishRef.current.position.x += lateralSway
   
     if (elapsed < arcDuration) {
       // --- Arc path ---
@@ -46,6 +70,7 @@ export function CompleteFishModel(props: FishModelProps) {
       const z = Math.sin(angle) * arcRadius
   
       fishRef.current!.position.set(x, 0, z)
+      fishRef.current.rotation.z = Math.sin(angle) * 0.2 // tilt into the curve
   
       // Face along tangent
       const dx = -Math.sin(angle)

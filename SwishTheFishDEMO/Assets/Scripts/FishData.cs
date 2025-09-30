@@ -7,9 +7,9 @@ public class FishData
     public string id;
     public int deviceId;
 
-    public int headId;
-    public int bodyId;
-    public int tailId;
+    public string headId;
+    public string bodyId;
+    public string tailId;
 
     public string color;
 }

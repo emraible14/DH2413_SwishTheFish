@@ -49,7 +49,7 @@ function SelectDeviceView(props: SelectDeviceViewProps) {
           </Select>
           </div>
           <div style={{height: '60vh', width: '100%'}}>
-            <Canvas  camera={{ fov: 8, position: [0, 60, 40] }}>
+            <Canvas  camera={{ fov: 15, position: [0, 60, 40] }}>
               <ambientLight intensity={0.5} />
               <directionalLight position={[5, 5, 5]} />
               <OrbitControls enableZoom={true} />
