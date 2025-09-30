@@ -11,9 +11,8 @@ public class BoidManager : MonoBehaviour
 
     private School[] schools;
 
-    ObjectInput objectInput;
-    bool objectOnSurface;
-
+    ObjectInput pushProp;
+    ObjectInput pullProp;
     ObjectInput spawnProp;
 
     private Camera camera;
@@ -42,48 +41,61 @@ public class BoidManager : MonoBehaviour
         }
 
         TableManager.Instance.OnTouch += OnTouchReceive;
-        objectInput = null;
     }
 
-    private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
-    {
-        if (objectInputs.Count > 0)
-        {
-            var matchedAnyButSpawn = false;
-            var matchedSpawn = false;
-            foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-            {
-                if (entry.Value.tagValue == TableManager.SpawnPropId)
-                {
+     private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+     {
+         if (objectInputs.Count > 0)
+         {
+             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
+             {
+                 if (entry.Value.tagValue == TableManager.SpawnPropId)
+                 {
                     spawnProp = entry.Value;
-                    matchedSpawn = true;
+                 }
+                 else
+                 {
+                    spawnProp = null;
+                 }
+
+                if (entry.Value.tagValue == TableManager.PushPropId)
+                {
+                    pushProp = entry.Value;
+                    Debug.Log(Helpers.GetPropOrientationDeg(pushProp.orientation));
                 }
                 else
                 {
-                    objectOnSurface = true;
-                    objectInput = entry.Value;
-                    matchedAnyButSpawn = true;
+                    pushProp = null;
+                }
+
+                if (entry.Value.tagValue == TableManager.PullPropId)
+                {
+                    pullProp = entry.Value;
+                }
+                else
+                {
+                    pullProp = null;
                 }
             }
-
-            if (!matchedAnyButSpawn)
-            {
-                objectInput = null;
-                objectOnSurface = false;
-            }
-
-            if (!matchedSpawn)
-            {
-                spawnProp = null;
-            }
-        }
-        else
-        {
-            objectOnSurface = false;
-            objectInput = null;
+    
+             //if (!matchedAnyButSpawn)
+             //{
+             //   objectInput = null;
+             //    objectOnSurface = false;
+             //}
+    
+             //if (!matchedSpawn)
+             //{
+             //    spawnProp = null;
+             //}
+         }
+         else
+         {
+            pullProp = null;
+            pushProp = null;
             spawnProp = null;
-        }
-    }
+         }
+     }
 
    
 
@@ -131,15 +143,21 @@ public class BoidManager : MonoBehaviour
             EventManager.Dispatch(new CustomEvent(EventManager.EventType.AddFish, null));
         }
 
-        Vector3 propPosition = Vector3.zero;
-        if (objectOnSurface)
+        // Vector3 propPosition = Vector3.zero;
+        // if (objectOnSurface)
+        // {
+        //     propPosition = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
+        // }
+
+        var props = new List<ObjectInput>
         {
-            propPosition = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
-        }
-        
+            pushProp,
+            pullProp    
+        };
+
         foreach (Boid boid in m_boids)
         {
-            boid.UpdateSimulation(Time.fixedDeltaTime, propPosition, objectOnSurface);
+            boid.UpdateSimulation(Time.fixedDeltaTime, props);
         }
     }
 

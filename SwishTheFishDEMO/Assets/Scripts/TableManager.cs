@@ -12,23 +12,22 @@ using OSC.NET;
 
 public class TableManager : MonoBehaviour
 {
-    private static TableManager _instance;
+    public static TableManager Instance { get; private set; }
 
-    public static TableManager Instance { get { return _instance; } }
-    
     public static int SpawnPropId = 4;
-    public static int PullPropId = 0;
-    public static int MouseId = 100;
-    
+    public const int PullPropId = 2;
+    public const int PushPropId = 1;
+    public const int MouseId = 100;
+
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
         }
         else
         {
-            _instance = this;
+            Instance = this;
         }
     }
 
@@ -46,10 +45,15 @@ public class TableManager : MonoBehaviour
 
     private Dictionary<int, ObjectInput> surfaceObjects;
 
+    public ObjectInput GetSurfaceObject(int objectId)
+    {
+        return surfaceObjects.TryGetValue(objectId, out var surfaceObject) ? surfaceObject : null;
+    }
+
     private Queue<OSCBundle> packetQueue = new Queue<OSCBundle>();
     private object queueLock = new object();
 
-    void Start()
+    private void Start()
     {
         surfaceFingers = new Dictionary<int, FingerInput>();
         surfaceObjects = new Dictionary<int, ObjectInput>();
@@ -124,7 +128,7 @@ public class TableManager : MonoBehaviour
 
     private void ProcessCursorMessage(OSCMessage msg)
     {
-        string msgType = msg.Values[0].ToString(); //   source / alive / set / fseq
+        var msgType = msg.Values[0].ToString(); //   source / alive / set / fseq
 
         switch (msgType)
         {
@@ -143,7 +147,6 @@ public class TableManager : MonoBehaviour
             case "set":
                 {
                     int id = (int)msg.Values[1];
-
                     float x = (float)msg.Values[2];
                     float y = (float)msg.Values[3];
                     Vector2 position = new Vector2(x, y);
@@ -193,7 +196,7 @@ public class TableManager : MonoBehaviour
                     int tagValue = (int)msg.Values[2];
 
                     float x = (float)msg.Values[3];
-                    float y = (float)msg.Values[4] * -1;
+                    float y = (float)msg.Values[4];
                     Vector2 position = new Vector2(x, y);
 
                     float orientation = (float)msg.Values[5];
@@ -264,22 +267,42 @@ public class TableManager : MonoBehaviour
             OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         } else if(Input.GetKey(KeyCode.Mouse0))
         {
-            surfaceObjects.TryGetValue(100, out var surfaceObject);
+            
             var viewportMousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-            if (surfaceObject == null)
+            if (!surfaceObjects.TryGetValue(MouseId, out var surfaceObject))
             {
-                surfaceObject = new ObjectInput(100, 100, viewportMousePos, 0, Vector3.zero, 0, 0, 0);
-                surfaceObjects.Add(100, surfaceObject);
+                surfaceObject = new ObjectInput(MouseId, MouseId, viewportMousePos, 0, Vector3.zero, 0, 0, 0);
+                surfaceObjects.Add(MouseId, surfaceObject);
             }
             else
             {
                 surfaceObject.position = viewportMousePos;
             }
             OnTouch?.Invoke(surfaceFingers, surfaceObjects);
-        }
-        else if (surfaceObjects.ContainsKey(100))
+        } else if (Input.GetKey(KeyCode.Mouse1))
         {
-            surfaceObjects.Remove(100);
+            
+            var viewportMousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            if (!surfaceObjects.TryGetValue(MouseId, out var surfaceObject))
+            {
+                surfaceObject = new ObjectInput(PushPropId, PushPropId, viewportMousePos, 0, Vector3.zero, 0, 0, 0);
+                surfaceObjects.Add(MouseId, surfaceObject);
+            }
+            else
+            {
+                surfaceObject.position = viewportMousePos;
+            }
+
+            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
+        }
+        else if (surfaceObjects.ContainsKey(PushPropId))
+        {
+            surfaceObjects.Remove(PushPropId);
+            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
+        }
+        else if (surfaceObjects.ContainsKey(MouseId))
+        {
+            surfaceObjects.Remove(MouseId);
             OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         }
     }
