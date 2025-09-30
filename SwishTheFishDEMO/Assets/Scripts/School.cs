@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class School : MonoBehaviour
 {
+    private Camera _camera;
+
     [SerializeField]
     private int m_numFish = 50;
 
@@ -23,6 +27,31 @@ public class School : MonoBehaviour
 
     [SerializeField]
     private float m_boundsForceFactor = 5;
+
+    [Header("Prop interactions")]
+    [SerializeField] private float propPullDistance = 10f;
+    [Tooltip("Multiplicative force to the fish acceleration towards the pull prop")]
+    [SerializeField] private float propPullForce = 1f;
+
+    public float PropPullForce => propPullForce;
+    public float PropPullDistance => propPullDistance;
+
+    [SerializeField] private float propRepelDistance = 10f;
+
+    [Tooltip("Multiplicative force to the fish acceleration away from the repel prop")]
+    [SerializeField] private float propRepelForce = 1f;
+    public float PropRepelForce => propRepelForce;
+    
+    [Tooltip("Min distance to prop for vibration activation")]
+    [SerializeField] private float propVibrationMinDistance = 0.2f;
+    public float PropVibrationMinDistance => propVibrationMinDistance;
+
+
+
+    public float PropRepelDistance
+    {
+        get { return propRepelDistance; }
+    }
 
     [Header("Boid behaviour data. Experiment with changing these during runtime")]
     [SerializeField]
@@ -97,56 +126,66 @@ public class School : MonoBehaviour
         set { m_drag = value; }
     }
 
-    [SerializeField] private float propPullDistance = 10f;
-
-    public float PropPullDistance
-    {
-        get { return propPullDistance; }
-    }
-
     public float NeighborRadius
     {
         get { return Mathf.Max(m_alignmentRadius, Mathf.Max(m_separationRadius, m_cohesionRadius)); }
     }
 
     public BoidManager BoidManager { get; set; }
-    
+
+    private void Awake()
+    {
+        _camera = Camera.main;
+    }
+
     public IEnumerable<Boid> FishSpawner()
     {
         for (int i = 0; i < m_numFish; ++i)
         {
-            var boid = SpawnFish(Vector3.zero, Color.red);
+            var boid = SpawnFish(Vector3.zero, Color.red, "112");
             yield return boid;
         }
     }
 
-    public Boid SpawnFish(Vector3 spawnPos, Color fishColor)
+
+    private Boid CreateFishObject(Vector3 spawnPoint, Color fishColor, string fishId)
     {
-        
+        // Load correct resource based on fishId and add scripts
+        var loadedResource = Resources.Load<GameObject>("fish" + fishId);
+        var temp = Instantiate(loadedResource, spawnPoint, Quaternion.identity, this.transform);
+        temp.AddComponent<Boid>();
+        temp.AddComponent<Fish>();
+
+        Boid boid = temp.GetComponent<Boid>();
+
+        // update fish color
+        SkinnedMeshRenderer[] renderers = boid.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer rend in renderers)
+        {
+            foreach (Material mat in rend.materials)
+            {
+                mat.color = fishColor;
+            }
+        }
+
+        return boid;
+    }
+
+    public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
+    {
+
         Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
         for (int j = 0; j < 3; ++j)
             spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
 
-        Boid boid = Instantiate(m_fishPrefab, spawnPoint, m_fishPrefab.transform.rotation) as Boid;
-
-        MeshRenderer[] renderers = boid.GetComponentsInChildren<MeshRenderer>();
-        foreach (MeshRenderer rend in renderers)
-        {
-            foreach (Material mat in rend.materials)
-            {
-                if (mat.name != "Material.003 (Instance)" && mat.name != "Material.004 (Instance)")
-                {
-                    // Debug.Log(mat.name);
-                    mat.color = fishColor;  // change this to your desired color
-                }
-            }
-        }
+        Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
 
         boid.Position = spawnPoint;
         boid.Velocity = Random.insideUnitSphere;
         boid.School = this;
         boid.transform.parent = this.transform;
+        boid.Camera = _camera;
         return boid;
     }
 
@@ -174,7 +213,7 @@ public class School : MonoBehaviour
         return -m_boundsForceFactor * force;
     }
 
-    void  OnDrawGizmos()
+    void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position, m_bounds.size);

@@ -2,39 +2,85 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = System.Object;
 
+[RequireComponent(typeof(MeshRenderer))]
 public class PropCursor : MonoBehaviour
 {
 
     ObjectInput objectInput;
     private Camera camera;
-    [SerializeField] MeshRenderer meshRenderer;
+    private MeshRenderer meshRenderer;
+    ObjectInput pushProp;
+    ObjectInput pullProp;
+    ObjectInput mouseProp;
 
     private School _school;
+    
+    private bool fishIsColliding = false;
+    private float lastFishCollisionTime;
+
+    [Tooltip("Amount of time to reset fish collision")]
+    [SerializeField] private float collisionCooldown = 0.3f; 
+
+    private void OnEnable()
+    {
+        EventManager.OnFishCollision += EventManagerOnOnFishCollision;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnFishCollision -= EventManagerOnOnFishCollision;
+    }
+
+    private void EventManagerOnOnFishCollision(object data)
+    {
+        if (pullProp == null && mouseProp == null) return;
+        
+        fishIsColliding = true;
+        lastFishCollisionTime = Time.time;
+        if (meshRenderer.material.color != Color.red) meshRenderer.material.color = Color.red;
+    }
 
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
     {
         if (objectInputs.Count > 0)
         {
-            var matchedTagValue = false;
             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
             {
-                if (entry.Value.tagValue == TableManager.MouseId || entry.Value.tagValue == TableManager.PullPropId)
+                if (entry.Value.tagValue == TableManager.PushPropId)
                 {
-                    Debug.Log("Matched");
-                    objectInput = entry.Value;
-                    matchedTagValue = true;
+                    pushProp = entry.Value;
                 }
-            }
+                else
+                {
+                    pushProp = null;
+                }
 
-            if (!matchedTagValue)
-            {
-                objectInput = null;
+                if (entry.Value.tagValue == TableManager.PullPropId)
+                {
+                    pullProp = entry.Value;
+                }
+                else
+                {
+                    pullProp = null;
+                }
+
+                if (entry.Value.tagValue == TableManager.MouseId)
+                {
+                    mouseProp = entry.Value;
+                }
+                else
+                {
+                    mouseProp = null;
+                }
             }
         }
         else
         {
-            objectInput = null;
+            pushProp = null;
+            pullProp = null;
+            mouseProp = null;
         }
     }
 
@@ -45,17 +91,42 @@ public class PropCursor : MonoBehaviour
         objectInput = null;
         camera = Camera.main;
         _school = FindObjectOfType<School>();
+        meshRenderer = GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (objectInput != null)
+        if (Time.time - lastFishCollisionTime >= collisionCooldown)
+        {
+            fishIsColliding = false;
+        }
+        
+        if ((pullProp != null || mouseProp != null))
         {
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            transform.position = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
-
+            if (!fishIsColliding) meshRenderer.material.color = Color.black;
+            transform.position = pullProp != null ? Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position, 50)) : Helpers
+                .GetWorldPositionOnPlane(camera, mouseProp.position, 50);
+            if (pullProp != null)
+            {
+                transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
+            }
+            transform.localScale = new Vector3(6, 2, 2);
         }
+        else if (pushProp != null)
+        {
+            if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            meshRenderer.material.color = Color.blue;
+            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pushProp.position));
+            transform.localScale = new Vector3(5, 5, 5);
+        }
+        // else if (mouseProp != null)
+        // {
+        //     if (!meshRenderer.enabled) meshRenderer.enabled = true;
+        //     meshRenderer.material.color = Color.yellow;
+        //     transform.position = Helpers.GetWorldPositionOnPlane(camera, mouseProp.position, 10);
+        // }
         else if (meshRenderer.enabled)
         {
             meshRenderer.enabled = false;
@@ -64,7 +135,7 @@ public class PropCursor : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!meshRenderer.enabled) return;
+        if ((meshRenderer && !meshRenderer.enabled) || !Application.isPlaying) return;
         
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, _school.PropPullDistance);
