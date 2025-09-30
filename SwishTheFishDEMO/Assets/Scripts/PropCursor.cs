@@ -65,16 +65,16 @@ public class PropCursor : MonoBehaviour
         {
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
             meshRenderer.material.color = Color.red;
-            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position));
+            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position, 50));
             transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
-
+            transform.localScale = new Vector3(6, 2, 2);
         }
         else if (pushProp != null)
         {
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
             meshRenderer.material.color = Color.blue;
             transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pushProp.position));
-
+            transform.localScale = new Vector3(5, 5, 5);
         }
         else if (meshRenderer.enabled)
         {

@@ -129,10 +129,16 @@ public class BoidManager : MonoBehaviour
             fishId = fish.headId + fish.bodyId + fish.tailId;
             fishColor = GetColor(fish.color);
         }
-        
+
+        StartCoroutine(FishSpawnAction(spawnProp, fishColor, fishId));
+    }
+
+    IEnumerator FishSpawnAction(ObjectInput prop, Color fishColor, string fishId)
+    {
+        yield return new WaitForSeconds(3.0f);
         if (spawnProp != null)
         {
-            Vector3 spawnPos = Helpers.GetWorldPositionOnPlane(camera, spawnProp.position);
+            Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
             m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
 
         }
