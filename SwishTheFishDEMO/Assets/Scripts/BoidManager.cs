@@ -40,49 +40,49 @@ public class BoidManager : MonoBehaviour
             m_boids.AddRange(school.FishSpawner());
         }
 
-        TableManager.Instance.OnTouch += OnTouchReceive;
+        // TableManager.Instance.OnTouch += OnTouchReceive;
         objectInput = null;
     }
 
-    private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
-    {
-        if (objectInputs.Count > 0)
-        {
-            var matchedAnyButSpawn = false;
-            var matchedSpawn = false;
-            foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-            {
-                if (entry.Value.tagValue == TableManager.SpawnPropId)
-                {
-                    spawnProp = entry.Value;
-                    matchedSpawn = true;
-                }
-                else
-                {
-                    objectOnSurface = true;
-                    objectInput = entry.Value;
-                    matchedAnyButSpawn = true;
-                }
-            }
-
-            if (!matchedAnyButSpawn)
-            {
-                objectInput = null;
-                objectOnSurface = false;
-            }
-
-            if (!matchedSpawn)
-            {
-                spawnProp = null;
-            }
-        }
-        else
-        {
-            objectOnSurface = false;
-            objectInput = null;
-            spawnProp = null;
-        }
-    }
+    // private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+    // {
+    //     if (objectInputs.Count > 0)
+    //     {
+    //         var matchedAnyButSpawn = false;
+    //         var matchedSpawn = false;
+    //         foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
+    //         {
+    //             if (entry.Value.tagValue == TableManager.SpawnPropId)
+    //             {
+    //                 spawnProp = entry.Value;
+    //                 matchedSpawn = true;
+    //             }
+    //             else
+    //             {
+    //                 objectOnSurface = true;
+    //                 objectInput = entry.Value;
+    //                 matchedAnyButSpawn = true;
+    //             }
+    //         }
+    //
+    //         if (!matchedAnyButSpawn)
+    //         {
+    //             objectInput = null;
+    //             objectOnSurface = false;
+    //         }
+    //
+    //         if (!matchedSpawn)
+    //         {
+    //             spawnProp = null;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         objectOnSurface = false;
+    //         objectInput = null;
+    //         spawnProp = null;
+    //     }
+    // }
 
    
 
@@ -113,15 +113,22 @@ public class BoidManager : MonoBehaviour
             EventManager.Dispatch(new CustomEvent(EventManager.EventType.AddFish, null));
         }
 
-        Vector3 propPosition = Vector3.zero;
-        if (objectOnSurface)
+        // Vector3 propPosition = Vector3.zero;
+        // if (objectOnSurface)
+        // {
+        //     propPosition = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
+        // }
+
+        var props = new List<ObjectInput>
         {
-            propPosition = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
-        }
-        
+            TableManager.Instance.GetSurfaceObject(TableManager.PullPropId),
+            TableManager.Instance.GetSurfaceObject(TableManager.PushPropId),
+            TableManager.Instance.GetSurfaceObject(TableManager.MouseId)
+        };
+
         foreach (Boid boid in m_boids)
         {
-            boid.UpdateSimulation(Time.fixedDeltaTime, propPosition, objectOnSurface);
+            boid.UpdateSimulation(Time.fixedDeltaTime, props);
         }
     }
 

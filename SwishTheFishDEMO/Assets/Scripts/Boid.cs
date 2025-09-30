@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Random = UnityEngine.Random;
 
 
@@ -12,13 +13,15 @@ public class Boid : MonoBehaviour
     public Vector3 Position;
     public Vector3 Velocity;
     public Vector3 Acceleration;
+
+    public Camera Camera;
     
     private void Start()
     {
         Velocity = Random.insideUnitSphere * 2;
     }
 
-    public void UpdateSimulation(float deltaTime, Vector3 objectInput, bool objectOnSurface)
+    public void UpdateSimulation(float deltaTime, List<ObjectInput> props)
     {
         //Clear acceleration from last frame
         Acceleration = Vector3.zero;
@@ -26,30 +29,58 @@ public class Boid : MonoBehaviour
         Acceleration += (Vector3)School.GetForceFromBounds(this);
         Acceleration += GetConstraintSpeedForce();
         Acceleration += GetSteeringForce();
-        Acceleration += PropPullForce(objectInput, objectOnSurface);
-            
-
+        
+        foreach (var prop in props.Where(prop => prop != null))
+        {
+            if (prop.id == TableManager.PullPropId || prop.id == TableManager.MouseId)
+            {
+                Acceleration += PropPullForce(Helpers.GetWorldPositionOnPlane(Camera,prop.position));
+            } else if (prop.id == TableManager.PushPropId)
+            {
+                Acceleration += PropRepelForce(Helpers.GetWorldPositionOnPlane(Camera, prop.position));
+            }
+        }
+        
         //Step simulation
         Velocity += deltaTime * Acceleration;
         Position +=  0.5f * deltaTime * deltaTime * Acceleration + deltaTime * Velocity;
     }
 
-    Vector3 PropPullForce(Vector3 propPosition, bool objectOnSurface)
+    Vector3 PropPullForce(Vector3 propPosition)
     {
         var force = Vector3.zero;
-        if (!objectOnSurface) return force;
         
         var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
 
-        if (distanceXZ.magnitude > School.PropPullDistance) return force;
+        if (distanceXZ.magnitude > School.PropRepelDistance) return force;
         
         var distance = propPosition - Position;
-        force += distance;
+        force += distance * School.PropPullForce;
             
         if (Velocity.magnitude > 0.1 && distance.magnitude < 2)
         {
             Velocity *= 0.8f;
         }
+        
+        return force;
+    }
+
+    Vector3 PropRepelForce(Vector3 propPosition)
+    {
+        var force = Vector3.zero;
+
+        var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
+
+        if (distanceXZ.magnitude > School.PropPullDistance) return force;
+
+        var distance = propPosition - Position;
+        var normDistance = distance.normalized;
+        
+        // done like this to prioritize horizontal movement over vertical
+        var repelForceX = Random.Range(1, 4) * normDistance.x * School.PropRepelForce;
+        var repelForceZ = Random.Range(1, 4) * normDistance.z * School.PropRepelForce;
+        
+        force -= new Vector3(repelForceX, normDistance.y, repelForceZ);
         
         return force;
     }
@@ -147,10 +178,5 @@ public class Boid : MonoBehaviour
         }
 
         return force;
-    }
-
-    private void OnDrawGizmos()
-    {
-        // Gizmos.DrawWireSphere(transform.position, School.AlignmentRadius);
     }
 }

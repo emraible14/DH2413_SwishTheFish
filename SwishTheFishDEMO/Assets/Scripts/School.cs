@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class School : MonoBehaviour
 {
+    private Camera _camera;
+    
     [SerializeField]
     private int m_numFish = 50;
 
@@ -23,6 +27,25 @@ public class School : MonoBehaviour
 
     [SerializeField]
     private float m_boundsForceFactor = 5;
+
+    [Header("Prop interactions")] 
+    [SerializeField] private float propPullDistance = 10f;
+    [Tooltip("Multiplicative force to the fish acceleration towards the pull prop")]
+    [SerializeField] private float propPullForce = 1f;
+
+    public float PropPullForce => propPullForce;
+    public float PropPullDistance => propPullDistance;
+
+    [SerializeField] private float propRepelDistance = 10f;
+    [SerializeField] private float propRepelForce = 1f;
+    public float PropRepelForce => propRepelForce;
+
+
+
+    public float PropRepelDistance
+    {
+        get { return propRepelDistance; }
+    }
 
     [Header("Boid behaviour data. Experiment with changing these during runtime")]
     [SerializeField]
@@ -97,20 +120,18 @@ public class School : MonoBehaviour
         set { m_drag = value; }
     }
 
-    [SerializeField] private float propPullDistance = 10f;
-
-    public float PropPullDistance
-    {
-        get { return propPullDistance; }
-    }
-
     public float NeighborRadius
     {
         get { return Mathf.Max(m_alignmentRadius, Mathf.Max(m_separationRadius, m_cohesionRadius)); }
     }
 
     public BoidManager BoidManager { get; set; }
-    
+
+    private void Awake()
+    {
+        _camera = Camera.main;
+    }
+
     public IEnumerable<Boid> FishSpawner()
     {
         for (int i = 0; i < m_numFish; ++i)
@@ -127,12 +148,13 @@ public class School : MonoBehaviour
 
         for (int j = 0; j < 3; ++j)
             spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
-
-        Boid boid = Instantiate(m_fishPrefab, spawnPoint, m_fishPrefab.transform.rotation) as Boid;
+        
+        Boid boid = Instantiate(m_fishPrefab, spawnPoint, m_fishPrefab.transform.rotation);
         boid.Position = spawnPoint;
         boid.Velocity = Random.insideUnitSphere;
         boid.School = this;
         boid.transform.parent = this.transform;
+        boid.Camera = _camera;
         return boid;
     }
 

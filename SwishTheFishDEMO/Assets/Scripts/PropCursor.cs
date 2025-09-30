@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshRenderer))]
 public class PropCursor : MonoBehaviour
 {
 
     ObjectInput objectInput;
     private Camera camera;
-    [SerializeField] MeshRenderer meshRenderer;
+    private MeshRenderer meshRenderer;
 
     private School _school;
 
@@ -19,7 +20,7 @@ public class PropCursor : MonoBehaviour
             var matchedTagValue = false;
             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
             {
-                if (entry.Value.tagValue == TableManager.MouseId || entry.Value.tagValue == TableManager.PullPropId)
+                if (entry.Value.tagValue == TableManager.MouseId || entry.Value.tagValue == TableManager.PullPropId || entry.Value.tagValue == TableManager.PushPropId)
                 {
                     objectInput = entry.Value;
                     matchedTagValue = true;
@@ -44,6 +45,7 @@ public class PropCursor : MonoBehaviour
         objectInput = null;
         camera = Camera.main;
         _school = FindObjectOfType<School>();
+        meshRenderer = GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -52,6 +54,9 @@ public class PropCursor : MonoBehaviour
         if (objectInput != null)
         {
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            meshRenderer.material.color = TableManager.Instance.GetSurfaceObject(TableManager.PushPropId) != null
+                ? Color.blue
+                : Color.red;
             transform.position = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
 
         }
@@ -63,7 +68,7 @@ public class PropCursor : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!meshRenderer.enabled) return;
+        if ((meshRenderer && !meshRenderer.enabled) || !Application.isPlaying) return;
         
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, _school.PropPullDistance);
