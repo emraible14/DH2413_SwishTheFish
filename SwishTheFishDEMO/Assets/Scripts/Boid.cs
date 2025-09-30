@@ -32,12 +32,12 @@ public class Boid : MonoBehaviour
         
         foreach (var prop in props.Where(prop => prop != null))
         {
-            if (prop.id == TableManager.PullPropId || prop.id == TableManager.MouseId)
+            if (prop.tagValue == TableManager.PullPropId || prop.tagValue == TableManager.MouseId)
             {
-                Acceleration += PropPullForce(Helpers.GetWorldPositionOnPlane(Camera,prop.position));
-            } else if (prop.id == TableManager.PushPropId)
+                Acceleration += PropPullForce(Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(Camera, prop.position)));
+            } else if (prop.tagValue == TableManager.PushPropId)
             {
-                Acceleration += PropRepelForce(Helpers.GetWorldPositionOnPlane(Camera, prop.position));
+                Acceleration += PropRepelForce(Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(Camera, prop.position)));
             }
         }
         
@@ -51,7 +51,7 @@ public class Boid : MonoBehaviour
         var force = Vector3.zero;
         
         var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
-
+        
         if (distanceXZ.magnitude > School.PropRepelDistance) return force;
         
         var distance = propPosition - Position;

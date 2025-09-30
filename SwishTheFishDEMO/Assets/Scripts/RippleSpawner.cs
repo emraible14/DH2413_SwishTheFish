@@ -38,7 +38,7 @@ public class RippleSpawner : MonoBehaviour
         {
             position = position - transform.position,
             // startSize = Mathf.Clamp((speed * maxRippleSize) / maxRippleSpeed, 0, 3),
-            startSize = 1
+            startSize = 25
             // startColor = new Color32(255, 255, 255, 128)
         };
         return emitParams;
@@ -54,7 +54,7 @@ public class RippleSpawner : MonoBehaviour
         
         var ray = _camera.ViewportPointToRay(_camera.ScreenToViewportPoint(currentMousePos));
         if (!Physics.Raycast(ray, out var hit)) return;
-        
+        Debug.Log(hit.point);
         var distanceTravelled = Vector3.Distance(lastRipplePos, hit.point);
         if (distanceTravelled < minDistanceBetween) return;
         

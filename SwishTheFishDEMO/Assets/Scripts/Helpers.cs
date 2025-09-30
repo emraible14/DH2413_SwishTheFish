@@ -16,4 +16,9 @@ public static class Helpers
     {
         return new Vector3(vector.x, vector.y, vector.z * -1);
     }
+
+    public static float GetPropOrientationDeg(float radians)
+    {
+        return (radians % (2 * Mathf.PI)) * (180 / Mathf.PI);
+    }
 }

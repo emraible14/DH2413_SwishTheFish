@@ -10,6 +10,8 @@ public class PropCursor : MonoBehaviour
     ObjectInput objectInput;
     private Camera camera;
     private MeshRenderer meshRenderer;
+    ObjectInput pushProp;
+    ObjectInput pullProp;
 
     private School _school;
 
@@ -17,24 +19,31 @@ public class PropCursor : MonoBehaviour
     {
         if (objectInputs.Count > 0)
         {
-            var matchedTagValue = false;
             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
             {
-                if (entry.Value.tagValue == TableManager.MouseId || entry.Value.tagValue == TableManager.PullPropId || entry.Value.tagValue == TableManager.PushPropId)
+                if (entry.Value.tagValue == TableManager.PushPropId)
                 {
-                    objectInput = entry.Value;
-                    matchedTagValue = true;
+                    pushProp = entry.Value;
                 }
-            }
+                else
+                {
+                    pushProp = null;
+                }
 
-            if (!matchedTagValue)
-            {
-                objectInput = null;
+                if (entry.Value.tagValue == TableManager.PullPropId)
+                {
+                    pullProp = entry.Value;
+                }
+                else
+                {
+                    pullProp = null;
+                }
             }
         }
         else
         {
-            objectInput = null;
+            pushProp = null;
+            pullProp = null;
         }
     }
 
@@ -51,13 +60,20 @@ public class PropCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (objectInput != null)
+        
+        if (pullProp != null)
         {
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            meshRenderer.material.color = TableManager.Instance.GetSurfaceObject(TableManager.PushPropId) != null
-                ? Color.blue
-                : Color.red;
-            transform.position = Helpers.GetWorldPositionOnPlane(camera, objectInput.position);
+            meshRenderer.material.color = Color.red;
+            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position));
+            transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
+
+        }
+        else if (pushProp != null)
+        {
+            if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            meshRenderer.material.color = Color.blue;
+            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pushProp.position));
 
         }
         else if (meshRenderer.enabled)

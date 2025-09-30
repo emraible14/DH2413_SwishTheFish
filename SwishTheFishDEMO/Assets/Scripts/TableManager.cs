@@ -15,7 +15,7 @@ public class TableManager : MonoBehaviour
     public static TableManager Instance { get; private set; }
 
     public static int SpawnPropId = 4;
-    public const int PullPropId = 0;
+    public const int PullPropId = 2;
     public const int PushPropId = 1;
     public const int MouseId = 100;
 
@@ -147,7 +147,6 @@ public class TableManager : MonoBehaviour
             case "set":
                 {
                     int id = (int)msg.Values[1];
-
                     float x = (float)msg.Values[2];
                     float y = (float)msg.Values[3];
                     Vector2 position = new Vector2(x, y);
@@ -197,7 +196,7 @@ public class TableManager : MonoBehaviour
                     int tagValue = (int)msg.Values[2];
 
                     float x = (float)msg.Values[3];
-                    float y = (float)msg.Values[4] * -1;
+                    float y = (float)msg.Values[4];
                     Vector2 position = new Vector2(x, y);
 
                     float orientation = (float)msg.Values[5];

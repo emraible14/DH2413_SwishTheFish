@@ -10,9 +10,8 @@ public class BoidManager : MonoBehaviour
 
     private School[] schools;
 
-    ObjectInput objectInput;
-    bool objectOnSurface;
-
+    ObjectInput pushProp;
+    ObjectInput pullProp;
     ObjectInput spawnProp;
 
     private Camera camera;
@@ -40,49 +39,62 @@ public class BoidManager : MonoBehaviour
             m_boids.AddRange(school.FishSpawner());
         }
 
-        // TableManager.Instance.OnTouch += OnTouchReceive;
-        objectInput = null;
+        TableManager.Instance.OnTouch += OnTouchReceive;
     }
 
-    // private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
-    // {
-    //     if (objectInputs.Count > 0)
-    //     {
-    //         var matchedAnyButSpawn = false;
-    //         var matchedSpawn = false;
-    //         foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-    //         {
-    //             if (entry.Value.tagValue == TableManager.SpawnPropId)
-    //             {
-    //                 spawnProp = entry.Value;
-    //                 matchedSpawn = true;
-    //             }
-    //             else
-    //             {
-    //                 objectOnSurface = true;
-    //                 objectInput = entry.Value;
-    //                 matchedAnyButSpawn = true;
-    //             }
-    //         }
-    //
-    //         if (!matchedAnyButSpawn)
-    //         {
-    //             objectInput = null;
-    //             objectOnSurface = false;
-    //         }
-    //
-    //         if (!matchedSpawn)
-    //         {
-    //             spawnProp = null;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         objectOnSurface = false;
-    //         objectInput = null;
-    //         spawnProp = null;
-    //     }
-    // }
+     private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+     {
+         if (objectInputs.Count > 0)
+         {
+             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
+             {
+                 if (entry.Value.tagValue == TableManager.SpawnPropId)
+                 {
+                    spawnProp = entry.Value;
+                 }
+                 else
+                 {
+                    spawnProp = null;
+                 }
+
+                if (entry.Value.tagValue == TableManager.PushPropId)
+                {
+                    pushProp = entry.Value;
+                    Debug.Log(Helpers.GetPropOrientationDeg(pushProp.orientation));
+                }
+                else
+                {
+                    pushProp = null;
+                }
+
+                if (entry.Value.tagValue == TableManager.PullPropId)
+                {
+                    pullProp = entry.Value;
+                }
+                else
+                {
+                    pullProp = null;
+                }
+            }
+    
+             //if (!matchedAnyButSpawn)
+             //{
+             //   objectInput = null;
+             //    objectOnSurface = false;
+             //}
+    
+             //if (!matchedSpawn)
+             //{
+             //    spawnProp = null;
+             //}
+         }
+         else
+         {
+            pullProp = null;
+            pushProp = null;
+            spawnProp = null;
+         }
+     }
 
    
 
@@ -121,9 +133,8 @@ public class BoidManager : MonoBehaviour
 
         var props = new List<ObjectInput>
         {
-            TableManager.Instance.GetSurfaceObject(TableManager.PullPropId),
-            TableManager.Instance.GetSurfaceObject(TableManager.PushPropId),
-            TableManager.Instance.GetSurfaceObject(TableManager.MouseId)
+            pushProp,
+            pullProp    
         };
 
         foreach (Boid boid in m_boids)
