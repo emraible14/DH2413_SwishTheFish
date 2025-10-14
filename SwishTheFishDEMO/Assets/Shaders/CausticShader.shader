@@ -71,17 +71,7 @@
                 fixed b2 = tex2D(_Text2, text2Uv + fixed2(-s, -s)).b;
                 text2 += float4(r2, g2, b2, 0.2);
 
-                // fixed4 center = float4(0.5, 0.5, 0, 0);
-                // float distance = length(center - i.uv);
-                //
-                // float radius = fmod(_Radius * _Time.y, 1);
-                // if (abs(distance - radius) <= 0.001)
-                // {
-                //     return fixed4(1, 1, 1, 1);
-                // }
-                // return fixed4(0, 0, 0, 0);
-
-                return min(mainText, text2) + _Color;
+                return min(mainText *_Color, text2 *_Color);
             }
             ENDCG
         }
