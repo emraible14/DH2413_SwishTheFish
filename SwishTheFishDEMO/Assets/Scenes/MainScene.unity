@@ -1494,6 +1494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89572202afab2be48ae9b4fd2117220d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showSettingsKey: 27
   boidManager: {fileID: 1680745100}
   fishAmountText: {fileID: 2055199156}
   socketStatus: {fileID: 311178667}
