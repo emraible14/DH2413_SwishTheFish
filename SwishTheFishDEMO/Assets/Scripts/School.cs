@@ -182,8 +182,12 @@ public class School : MonoBehaviour
         Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
 
         boid.Position = spawnPoint;
-        boid.Velocity = Random.insideUnitSphere;
+
+        Vector3 initialDirection = Vector3.forward;
+        boid.Velocity = initialDirection * MinSpeed;
         Debug.Log(boid.Velocity);
+        boid.transform.rotation = Quaternion.LookRotation(initialDirection);
+
         boid.School = this;
         boid.transform.parent = this.transform;
         boid.Camera = _camera;
