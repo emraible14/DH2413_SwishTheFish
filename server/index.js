@@ -73,8 +73,8 @@ app.get("/", (req, res) => {
 server.listen(port, function () {
   console.log(`Listening on http://localhost:${port}`);
   // print only url with green color
-  console.log(
-    "\x1b[32m%s\x1b[0m",
-    `Listening on local network http://${results["en0"][0]}:${port}`
-  );
+  // console.log(
+  //   "\x1b[32m%s\x1b[0m",
+  //   `Listening on local network http://${results["en0"][0]}:${port}`
+  // );
 });

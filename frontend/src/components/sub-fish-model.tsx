@@ -1,6 +1,6 @@
 import { Center, useGLTF } from '@react-three/drei'
 import { useEffect, useRef, useState } from 'react';
-import type { Group } from 'three';
+import { Vector3, type Group } from 'three';
 
 interface SubFishModelProps {
   componentPart: string,
@@ -10,7 +10,7 @@ interface SubFishModelProps {
 
 export function SubFishModel(props: SubFishModelProps) {
   const { scene, materials } = useGLTF(`/${props.componentPart}${props.componentId}.glb`) // or .glb
-  const [position, setPosition] = useState([0,0,0]);
+  const [position, setPosition] = useState<Vector3>(new Vector3(0, 0, 0));
 
   useEffect(() => {
     Object.keys(materials).forEach((matName : string) => {
@@ -22,9 +22,9 @@ export function SubFishModel(props: SubFishModelProps) {
 
   useEffect(() => {
     if (props.componentPart === 'head') {
-      setPosition([0, 0, -2.1]);
+      setPosition(new Vector3(0, 0, -2.1));
     } else if (props.componentPart === 'tail') {
-      setPosition([0, 0, 1.9]);
+      setPosition(new Vector3(0, 0, 1.9));
     }
   }, [props]);
 
