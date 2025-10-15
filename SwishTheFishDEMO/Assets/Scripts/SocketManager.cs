@@ -60,7 +60,7 @@ public class SocketManager : MonoBehaviour
   
   private WebSocket InitSocket(string ipAddress)
   {
-    _websocket = new WebSocket("ws://" + ipAddress);
+    _websocket = new WebSocket("wss://" + ipAddress);
 
     _websocket.OnOpen += OnSocketConnect;
 

@@ -13,7 +13,7 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private Button connectButton;
     [SerializeField] private TMP_InputField ipInputField;
 
-    private string ipAddressInput = "localhost:3001";
+    private string ipAddressInput = "dh2413-swishthefish.onrender.com";
     private Canvas canvasComponent;
     
     void OnEnable()
