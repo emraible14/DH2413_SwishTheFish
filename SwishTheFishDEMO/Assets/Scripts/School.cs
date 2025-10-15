@@ -183,6 +183,7 @@ public class School : MonoBehaviour
 
         boid.Position = spawnPoint;
         boid.Velocity = Random.insideUnitSphere;
+        Debug.Log(boid.Velocity);
         boid.School = this;
         boid.transform.parent = this.transform;
         boid.Camera = _camera;

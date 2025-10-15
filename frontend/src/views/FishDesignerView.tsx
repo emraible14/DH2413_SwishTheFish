@@ -90,9 +90,9 @@ function FishDesignerView(props: FishDesignerProps) {
 
   function sendConfig() {
     const config: FishConfig = {
-      tailId: tailCarouselApi?.selectedScrollSnap() ? tailCarouselApi?.selectedScrollSnap() + 2 : 0 + 2,
-      bodyId: bodyCarouselApi?.selectedScrollSnap() ? bodyCarouselApi?.selectedScrollSnap() + 3 : 0 + 3,
-      headId: headCarouselApi?.selectedScrollSnap() ? headCarouselApi?.selectedScrollSnap() + 3 : 0 + 3,
+      tailId: tailCarouselApi?.selectedScrollSnap() ? tailCarouselApi?.selectedScrollSnap() + 1 : 0 + 1,
+      bodyId: bodyCarouselApi?.selectedScrollSnap() ? bodyCarouselApi?.selectedScrollSnap() + 1 : 0 + 1,
+      headId: headCarouselApi?.selectedScrollSnap() ? headCarouselApi?.selectedScrollSnap() + 1 : 0 + 1,
       color: color,
       deviceId: null,
     }
@@ -111,13 +111,13 @@ function FishDesignerView(props: FishDesignerProps) {
         <div className='flex flex-col justify-center items-center'>
           <Carousel className="w-60" setApi={setTailCarouselApi}>
             <CarouselContent>
-              {Array.from({ length: 2 }).map((_, index) => (
+              {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index}>
                   {index === tailIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[5, 5, 5]} />
                     <OverheadCamera />
-                    <SubFishModel color={color} componentPart='tail' componentId={index+2}/>
+                    <SubFishModel color={color} componentPart='tail' componentId={index+1}/>
                     {/* <Tail material_color={color} position={[0, 0, 2.2]}/> */}
                   </Canvas>}
                 </CarouselItem>
@@ -128,13 +128,13 @@ function FishDesignerView(props: FishDesignerProps) {
           </Carousel>
           <Carousel className="w-60" setApi={setBodyCarouselApi}>
             <CarouselContent>
-              {Array.from({ length: 1 }).map((_, index) => (
+              {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index}>
                   {index === bodyIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[5, 5, 5]} />
                     <OverheadCamera />
-                    <SubFishModel color={color} componentPart='body' componentId={index+3}/>
+                    <SubFishModel color={color} componentPart='body' componentId={index+1}/>
                   </Canvas>}
                 </CarouselItem>
               ))}
@@ -144,13 +144,12 @@ function FishDesignerView(props: FishDesignerProps) {
           </Carousel>
           <Carousel className="w-60" setApi={setHeadCarouselApi}>
             <CarouselContent>
-              {Array.from({ length: 3 }).map((_, index) => (
+              {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index}>
                     {index === headIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                       <ambientLight intensity={0.5} />
                       <directionalLight position={[5, 5, 5]} />
-                      <SubFishModel color={color} componentPart='head' componentId={index+3}/>
-                      {/* <Head material_color={color} position={[0, 0, -1]}/> */}
+                      <SubFishModel color={color} componentPart='head' componentId={index+1}/>
                     </Canvas>}
                 </CarouselItem>
               ))}

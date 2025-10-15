@@ -9,9 +9,9 @@ function StartView(props: StartViewProps) {
   return (
     <>
       <div className='absolute inset-0 flex flex-col items-center justify-evenly'>
-        <div className="flex flex-col items-center justify-center gap-5">
+        <div className="flex flex-col items-center justify-center gap-2">
           <div>
-            <img src="/logo.png" height={150} width={150}></img>
+            <img src="/logo2.png" height={200} width={200}></img>
           </div>
           <div>
             <h1><b>Swish the Fish!</b></h1>

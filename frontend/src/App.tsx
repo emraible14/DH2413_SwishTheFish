@@ -22,7 +22,7 @@ function App() {
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const websocket = new WebSocket("ws://130.229.180.45:3001");
+    const websocket = new WebSocket("ws://192.168.50.129:3001");
     setWs(websocket)
 
     websocket.onopen = function () {
