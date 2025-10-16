@@ -25,19 +25,19 @@ function FishDesignerView(props: FishDesignerProps) {
 
 
   useEffect(() => {
-    if (props.config.headId != 0) {
-      headCarouselApi?.scrollTo(props.config.headId);
-    }
-    if (props.config.bodyId != 0) {
-      bodyCarouselApi?.scrollTo(props.config.bodyId);
-    }
-    if (props.config.tailId != 0) {
-      tailCarouselApi?.scrollTo(props.config.tailId);
-    }
-    if (props.config.color != "#000000") {
+    // Only run once all APIs are ready
+    if (!headCarouselApi || !bodyCarouselApi || !tailCarouselApi) return;
+
+    // Scroll to the indices (adjusting for 1-based IDs)
+    if (props.config.headId > 0) headCarouselApi.scrollTo(props.config.headId - 1);
+    if (props.config.bodyId > 0) bodyCarouselApi.scrollTo(props.config.bodyId - 1);
+    if (props.config.tailId > 0) tailCarouselApi.scrollTo(props.config.tailId - 1);
+
+    // Update color if needed
+    if (props.config.color && props.config.color !== "#000000") {
       setColor(props.config.color);
     }
-  }, []);
+  }, [props.config, headCarouselApi, bodyCarouselApi, tailCarouselApi]);
 
   useEffect(() => {
     if (!tailCarouselApi) return;

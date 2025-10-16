@@ -14,7 +14,7 @@ export function SubFishModel(props: SubFishModelProps) {
 
   useEffect(() => {
     Object.keys(materials).forEach((matName : string) => {
-      if (matName != "Material.003" && matName != "Material.004") {
+      if (matName.slice(0, 3) !== "Mat") { // hacky way to avoid coloring eyes
         (materials[matName] as any).color.set(props.color);
       }
     });

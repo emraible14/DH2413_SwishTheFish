@@ -11,7 +11,7 @@ function App() {
   const [viewState, setViewState] = useState(0);
 
   const defaultFish: FishConfig = {
-    tailId: 2,
+    tailId: 1,
     bodyId: 1,
     headId: 1,
     color: '#000000',
