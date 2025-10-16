@@ -128,7 +128,7 @@ function FishDesignerView(props: FishDesignerProps) {
           </Carousel>
           <Carousel className="w-60" setApi={setBodyCarouselApi}>
             <CarouselContent>
-              {Array.from({ length: 5 }).map((_, index) => (
+              {Array.from({ length: 7 }).map((_, index) => (
                 <CarouselItem key={index}>
                   {index === bodyIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                     <ambientLight intensity={0.5} />
