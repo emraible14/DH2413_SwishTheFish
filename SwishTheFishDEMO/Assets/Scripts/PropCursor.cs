@@ -46,41 +46,38 @@ public class PropCursor : MonoBehaviour
     {
         if (objectInputs.Count > 0)
         {
-            foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-            {
-                if (entry.Value.tagValue == TableManager.PushPropId)
-                {
-                    pushProp = entry.Value;
-                }
-                else
-                {
-                    pushProp = null;
-                }
-
-                if (entry.Value.tagValue == TableManager.PullPropId)
-                {
-                    pullProp = entry.Value;
-                }
-                else
-                {
-                    pullProp = null;
-                }
-
-                if (entry.Value.tagValue == TableManager.MouseId)
-                {
-                    mouseProp = entry.Value;
-                }
-                else
-                {
-                    mouseProp = null;
-                }
-            }
-        }
-        else
-        {
-            pushProp = null;
-            pullProp = null;
-            mouseProp = null;
+            // foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
+            // {
+            //     if (entry.Value.tagValue == TableManager.PushPropId)
+            //     {
+            //         pushProp = entry.Value;
+            //     }
+            //     else
+            //     {
+            //         pushProp = null;
+            //     }
+            //
+            //     if (entry.Value.tagValue == TableManager.PullPropId)
+            //     {
+            //         pullProp = entry.Value;
+            //     }
+            //     else
+            //     {
+            //         pullProp = null;
+            //     }
+            //
+            //     if (entry.Value.tagValue == TableManager.MouseId)
+            //     {
+            //         mouseProp = entry.Value;
+            //     }
+            //     else
+            //     {
+            //         mouseProp = null;
+            //     }
+            // }
+            pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
+            pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pushProp) ? pushProp : null;
+            mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
         }
     }
 
