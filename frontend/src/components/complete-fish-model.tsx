@@ -15,7 +15,7 @@ export function CompleteFishModel(props: FishModelProps) {
   // If you want to find the armature explicitly:
   const armature = scene.getObjectByName('Armature')
   const tailBone = armature?.getObjectByName('tail'); 
-  const bodyBone = armature?.getObjectByName('body'); 
+  // const bodyBone = armature?.getObjectByName('body'); 
 
   useEffect(() => {
     Object.keys(materials).forEach((matName : string) => {
@@ -35,14 +35,14 @@ export function CompleteFishModel(props: FishModelProps) {
     // wiggle speed and amplitude
     const frequency = 4   // how fast the fish wiggles
     const tailAmp   = 0.2 // radians (~17°)
-    const bodyAmp = 0.05;
+    // const bodyAmp = 0.05;
 
     // bodyBone.rotation.z = Math.sin(t * frequency) * bodyAmp
 
     // tail wiggle (stronger and phase-shifted to follow the body)
-    tailBone.rotation.z = Math.sin(t * frequency + Math.PI / 4) * tailAmp
-
-    // if (!swimming || !props.onSwimAway) return
+    if (tailBone) {
+      tailBone.rotation.z = Math.sin(t * frequency + Math.PI / 4) * tailAmp
+    } 
 
     if (!swimming || !props.onSwimAway) {
       const wiggle = Math.sin(t * frequency) * 0.05 // 3° sway
@@ -54,7 +54,7 @@ export function CompleteFishModel(props: FishModelProps) {
     const elapsed = state.clock.elapsedTime - startTime.current
   
     // Speed controls
-    const speed = 5 // units/sec
+    const speed = 8 // units/sec
     const arcRadius = 2.5
     const arcLength = Math.PI * arcRadius // half circle length
     const arcDuration = arcLength / speed // time to complete arc
