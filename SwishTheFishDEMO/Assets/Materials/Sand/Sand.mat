@@ -57,7 +57,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SandAlbedo:
         m_Texture: {fileID: 2800000, guid: 877111c12cdad904da1250637238d82f, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 6, y: 6}
         m_Offset: {x: 0, y: 0}
     - _SandHeight:
         m_Texture: {fileID: 2800000, guid: 7de558928840a0048a233b1af115a0b9, type: 3}
