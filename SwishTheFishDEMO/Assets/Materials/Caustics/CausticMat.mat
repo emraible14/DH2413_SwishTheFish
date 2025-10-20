@@ -88,7 +88,7 @@ Material:
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
-    - _CausticSpeed: 0.01
+    - _CausticSpeed: 0.03
     - _CausticsSpeed: 1
     - _Color: 1
     - _Cull: 2
