@@ -87,7 +87,7 @@ public class PropCursor : MonoBehaviour
             pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
             mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
             diverProp = objectInputs.TryGetValue(TableManager.DiverId, out diverProp) ? diverProp : null;
-
+            
             //Debug.Log(pullProp);
         }
     }

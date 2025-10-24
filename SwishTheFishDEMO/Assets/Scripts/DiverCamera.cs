@@ -4,14 +4,15 @@ using System.Linq;
 using UnityEngine;
 using static Microsoft.Surface.NativeWrappers.NativeMethods;
 using static UnityEngine.GraphicsBuffer;
+using Object = System.Object;
 
 public class DiverCamera : MonoBehaviour
 {
     private Camera camera;
 
     public Camera diverCamera;             // diver's camera
-    public Camera placeholderCamera;          // in worst case, have another camera
-    public GameObject placeholderImage;    // Canvas image, plane or anything
+    public Color fallbackColor = Color.blue;
+    private Color originalColor;
 
     public float moveSpeed = 7f;
     public float rotationSpeed = 11f;
@@ -32,16 +33,17 @@ public class DiverCamera : MonoBehaviour
     ObjectInput diverProp;
     public bool presentDiver = false;
 
-    public Color fallbackColor = Color.blue;
-    private Color originalColor;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        TableManager.Instance.OnTouch += OnTouchReceive;
+
         camera = Camera.main;
         originalPos = transform.position;
         originalColor = diverCamera.backgroundColor;
+
     }
 
     // Update is called once per frame
@@ -51,7 +53,19 @@ public class DiverCamera : MonoBehaviour
         ShowImage();
         DiverInput();
         MoveCamera();
+
+        //PrintControllerInputs();
     }
+
+    void PrintControllerInputs()
+    {
+        for (int i = 1; i <= 4; i++)
+        {
+            float axis = Input.GetAxis("Axis " + i);
+            if (Mathf.Abs(axis) > 0.1f) Debug.Log("Axis " + i + ": " + axis);
+        }
+    }
+
     void LateUpdate()
     {
 
@@ -96,19 +110,22 @@ public class DiverCamera : MonoBehaviour
     {
         if (prop != null && prop.tagValue == TableManager.DiverId)
         {
-            Debug.Log("we received the signal for the diver, we add it");
             Vector3 diverPosition = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+            diverPosition.y = transform.position.y;
+            //if (presentDiver) diverPosition.y = transform.position.y;
+            //else diverPosition.y -= 2f;
 
-            if (presentDiver) diverPosition.y = transform.position.y;
-            else diverPosition.y -= 2f;
-
-            originalPos = diverPosition;
+            if ((diverPosition - originalPos).magnitude > 1e-2f)
+            {
+                diverPosition.y = transform.position.y;
+                originalPos = diverPosition;
+                transform.position = Vector3.Lerp(transform.position, originalPos, smoothing * Time.deltaTime);
+            }
             presentDiver = true;
-            Debug.Log("the diver's original position is " + originalPos);
         }
         else
         {
-            //presentDiver = false;
+            presentDiver = false;
         }
     }
 
@@ -117,11 +134,15 @@ public class DiverCamera : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        goUp = Input.GetKey(upKey);
-        goDown = Input.GetKey(downKey);
+
+        float triggerUp = Input.GetAxis("4th Axis");
+        float triggerDown = Input.GetAxis("5th Axis");
+
+        goUp = Input.GetKey(upKey) || triggerUp > 0.1f;
+        goDown = Input.GetKey(downKey) || triggerDown > 0.1f;
 
         // ONLY FOR TESTING
-        presentDiver = Input.GetKey(KeyCode.M);
+        //presentDiver = Input.GetKey(KeyCode.M);
         //if (presentDiver) diverProp = new ObjectInput();
     }
 
@@ -159,9 +180,9 @@ public class DiverCamera : MonoBehaviour
         yRotation += turnY;
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
-        float xBounded = Mathf.Clamp(targetCamPos.x, -60, 60);
+        float xBounded = Mathf.Clamp(targetCamPos.x, -80, 80);
         float yBounded = Mathf.Clamp(targetCamPos.y, -25, 10);
-        float zBounded = Mathf.Clamp(targetCamPos.z, -35, 35);
+        float zBounded = Mathf.Clamp(targetCamPos.z, -45, 45);
         targetCamPos = new Vector3(xBounded, yBounded, zBounded);
 
         transform.position = Vector3.Lerp(transform.position, targetCamPos, smoothing * Time.deltaTime);

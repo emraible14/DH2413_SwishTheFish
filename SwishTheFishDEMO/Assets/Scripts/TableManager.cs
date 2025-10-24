@@ -16,7 +16,7 @@ public class TableManager : MonoBehaviour
 
     public static int SpawnPropId = 4;
     public const int DiverId = 3;
-    public const int PullPropId = 0;
+    public const int PullPropId = 2;
     public const int PushPropId = 1;
     public const int MouseId = 100;
 

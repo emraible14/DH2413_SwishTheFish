@@ -189,4 +189,14 @@ public class Boid : MonoBehaviour
 
         return force;
     }
+
+    public Vector3 PublicGetSteeringForce()
+    {
+        return GetSteeringForce();
+    }
+
+    public Vector3 PublicGetConstraintSpeedForce()
+    {
+        return GetConstraintSpeedForce();
+    }
 }

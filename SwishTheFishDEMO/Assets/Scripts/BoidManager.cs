@@ -8,6 +8,7 @@ using System.Linq;
 public class BoidManager : MonoBehaviour
 {
     private List<Boid> m_boids;
+    private List<Boid> to_remove;
 
     private School[] schools;
 
@@ -30,6 +31,7 @@ public class BoidManager : MonoBehaviour
     private void Start()
     {
         m_boids = new List<Boid>();
+        to_remove = new List<Boid>();
         
         camera = Camera.main;
 
@@ -43,7 +45,7 @@ public class BoidManager : MonoBehaviour
         TableManager.Instance.OnTouch += OnTouchReceive;
     }
 
-     private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+    private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
      {
          if (objectInputs.Count > 0)
          {
@@ -65,8 +67,6 @@ public class BoidManager : MonoBehaviour
             spawnProp = null;
          }
      }
-
-   
 
     public int GetNumBoids()
     {
@@ -141,6 +141,9 @@ public class BoidManager : MonoBehaviour
         {
             boid.UpdateSimulation(Time.fixedDeltaTime, props);
         }
+
+        EliminateFishes();
+        SwimOff();
     }
 
     public IEnumerable<Boid> GetNeighbors(Boid boid, float radius)
@@ -150,6 +153,60 @@ public class BoidManager : MonoBehaviour
         {
             if (other != boid && (other.Position - boid.Position).sqrMagnitude < radiusSq)
                 yield return other;
+        }
+    }
+
+    public void EliminateFishes()
+    {
+        int n_boids = GetNumBoids();
+        int max_boids = 10;
+        if (n_boids > max_boids)
+        {
+            int diff = n_boids - max_boids;
+            for (int i = 0; i < diff; i++)
+            {
+                Debug.Log("Removing a fish");
+                to_remove.Add(m_boids[0]);
+                m_boids.RemoveAt(0);
+            }
+        }
+    }
+
+    public void SwimOff()
+    {
+        int n_toRemove = to_remove.Count();
+        if (n_toRemove < 1) return;
+
+        float deltaTime = Time.fixedDeltaTime;
+
+        for (int i = 0; i < n_toRemove; i++)
+        {
+            Boid bi = to_remove[i];
+
+            bi.Acceleration = Vector3.zero;
+            bi.Acceleration += (Vector3)bi.School.GetForceFromBounds(bi);
+            bi.Acceleration += bi.PublicGetConstraintSpeedForce();
+            bi.Acceleration += bi.PublicGetSteeringForce();
+            bi.Acceleration *= 0.01f;
+            bi.Velocity += deltaTime * bi.Acceleration;
+            bi.Velocity.y = 0f;
+            bi.Velocity *= 1.02f;
+            bi.Position += 0.5f * deltaTime * deltaTime * bi.Acceleration + deltaTime * bi.Velocity;
+            // make advance
+            // if out of bounds, kill
+        }
+
+        int offset = 0;
+        for (int i = 0; i < n_toRemove; i++)
+        {
+            Boid bi = to_remove[i - offset];
+            if (Mathf.Abs(bi.Position.x) > 200f || Mathf.Abs(bi.Position.z) > 100f)
+            {
+                Destroy(bi.gameObject);
+                to_remove.RemoveAt(i - offset);
+                offset++;
+            }
+            // remove here
         }
     }
 }
