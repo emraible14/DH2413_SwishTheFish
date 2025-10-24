@@ -42,7 +42,6 @@ export function CompleteFishModel(props: FishModelProps) {
 
     // bodyBone.rotation.z = Math.sin(t * frequency) * bodyAmp
 
-    // tail wiggle (stronger and phase-shifted to follow the body)
     if (tailBone) {
       tailBone.rotation.z = Math.sin(t * frequency + Math.PI / 4) * tailAmp
     } 
@@ -93,12 +92,16 @@ export function CompleteFishModel(props: FishModelProps) {
       fishRef.current!.position.set(endX, 0, endZ - distance)
       fishRef.current!.rotation.y = Math.PI // facing +Z
   
-      // Once fish is far enough, trigger exit but only once
-      if (endZ - distance < 100 && !swamAway) {
+      // Once fish is far enough, trigger exit
+      if (endZ - distance < 100) {
+        props.onSwimAway()
+      }
+
+      // Once fish is off screen trigger splash sound, but only once
+      if (fishRef.current!.position.z < -20 && !swamAway) {
         setSwamAway(true);
         audioRef.current.currentTime = 0;
         audioRef.current.play();
-        props.onSwimAway()
       }
     }
   })
