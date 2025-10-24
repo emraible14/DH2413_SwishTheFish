@@ -160,20 +160,27 @@ public class School : MonoBehaviour
 
         // update fish color
         SkinnedMeshRenderer[] renderers = boid.GetComponentsInChildren<SkinnedMeshRenderer>();
-        foreach (SkinnedMeshRenderer rend in renderers)
+        foreach (SkinnedMeshRenderer r in renderers)
         {
-            foreach (Material mat in rend.materials)
+            foreach (Material mat in r.materials)
             {
-                mat.color = fishColor;
+                //mat.color = fishColor;
             }
         }
+
+        SkinnedMeshRenderer rend = boid.GetComponentInChildren<SkinnedMeshRenderer>();
+        for (int i = 2; i < rend.materials.Length; i++)
+        {
+            Material mat = rend.materials[i];
+            mat.color = fishColor;
+        }
+        //rend.materials[1].color = Color.black;
 
         return boid;
     }
 
     public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
     {
-
         Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
         for (int j = 0; j < 3; ++j)
