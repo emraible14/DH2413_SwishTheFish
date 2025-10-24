@@ -14,6 +14,7 @@ public class PropCursor : MonoBehaviour
     ObjectInput pushProp;
     ObjectInput pullProp;
     ObjectInput mouseProp;
+    ObjectInput diverProp;
 
     private School _school;
     
@@ -78,6 +79,7 @@ public class PropCursor : MonoBehaviour
             pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
             pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pushProp) ? pushProp : null;
             mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
+            diverProp = objectInputs.TryGetValue(TableManager.DiverId, out diverProp) ? diverProp : null;
         }
     }
 
@@ -124,6 +126,13 @@ public class PropCursor : MonoBehaviour
         //     meshRenderer.material.color = Color.yellow;
         //     transform.position = Helpers.GetWorldPositionOnPlane(camera, mouseProp.position, 10);
         // }
+        else if (diverProp != null)
+        {
+            if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            meshRenderer.material.color = Color.yellow;
+            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, diverProp.position));
+            transform.localScale = new Vector3(1, 2, 1);
+        }
         else if (meshRenderer.enabled)
         {
             meshRenderer.enabled = false;
