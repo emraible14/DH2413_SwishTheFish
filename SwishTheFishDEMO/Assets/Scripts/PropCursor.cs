@@ -76,10 +76,19 @@ public class PropCursor : MonoBehaviour
             //         mouseProp = null;
             //     }
             // }
+
+            //ObjectInput localPushProp;
+            //if (objectInputs.TryGetValue(TableManager.PushPropId, out localPushProp)) {
+              //  pushProp = localPushProp;
+                //Debug.Log(localPushProp.tagValue);
+            //}
+            
             pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
-            pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pushProp) ? pushProp : null;
+            pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
             mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
             diverProp = objectInputs.TryGetValue(TableManager.DiverId, out diverProp) ? diverProp : null;
+
+            //Debug.Log(pullProp);
         }
     }
 

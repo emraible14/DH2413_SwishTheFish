@@ -47,36 +47,17 @@ public class BoidManager : MonoBehaviour
      {
          if (objectInputs.Count > 0)
          {
-             foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-             {
-                 if (entry.Value.tagValue == TableManager.SpawnPropId)
-                 {
-                    spawnProp = entry.Value;
-                 }
-                 else
-                 {
-                    spawnProp = null;
-                 }
 
-                if (entry.Value.tagValue == TableManager.PushPropId)
-                {
-                    pushProp = entry.Value;
-                }
-                else
-                {
-                    pushProp = null;
-                }
-
-                if (entry.Value.tagValue == TableManager.PullPropId || entry.Value.tagValue == TableManager.MouseId)
-                {
-                    pullProp = entry.Value;
-                }
-                else
-                {
-                    pullProp = null;
-                }
-            }
+                pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
+                pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
          }
+         else if (surfaceFingers.Count > 0)
+        {
+            foreach (KeyValuePair<int, FingerInput> entry in surfaceFingers)
+            {
+                pullProp = new ObjectInput(10000, 2, entry.Value.position, 0, Vector2.zero, 0, 0, 0);
+            }
+        }
          else
          {
             pullProp = null;

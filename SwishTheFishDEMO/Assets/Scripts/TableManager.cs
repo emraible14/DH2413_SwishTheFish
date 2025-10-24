@@ -16,7 +16,7 @@ public class TableManager : MonoBehaviour
 
     public static int SpawnPropId = 4;
     public const int DiverId = 3;
-    public const int PullPropId = 2;
+    public const int PullPropId = 0;
     public const int PushPropId = 1;
     public const int MouseId = 100;
 
@@ -211,14 +211,14 @@ public class TableManager : MonoBehaviour
                     float angularAcc = (float)msg.Values[10];
 
                     ObjectInput surfaceObject;
-                    if (surfaceObjects.TryGetValue(id, out surfaceObject))
+                    if (surfaceObjects.TryGetValue(tagValue, out surfaceObject))
                     {
                         surfaceObject.UpdateProps(position, orientation, velocity, acc, angularVel, angularAcc);
                     }
                     else
                     {
                         surfaceObject = new ObjectInput(id, tagValue, position, orientation, velocity, acc, angularVel, angularAcc);
-                        surfaceObjects.Add(id, surfaceObject);
+                        surfaceObjects.Add(tagValue, surfaceObject);
                     }
                     break;
                 }
@@ -262,10 +262,11 @@ public class TableManager : MonoBehaviour
                         // but we don't really need it
                     }
                 }
+                OnTouch?.Invoke(surfaceFingers, surfaceObjects);
+
                 packetQueue.Clear();
             }
 
-            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         } else if(Input.GetKey(KeyCode.Mouse0))
         {
             

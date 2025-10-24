@@ -10,10 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Spinner } from "@/components/ui/spinner";
 import type { FishConfig } from "@/utils/types";
-import { OrbitControls } from "@react-three/drei";
+import { Html, OrbitControls, useProgress } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 interface SelectDeviceViewProps {
   config: FishConfig;
@@ -24,6 +25,20 @@ interface SelectDeviceViewProps {
 
 function SelectDeviceView(props: SelectDeviceViewProps) {
   const [device, selectDevice] = useState<string | null>(null);
+
+  function Loader() {
+    const { progress } = useProgress()
+    return (
+      <Html center>
+        <div className="flex flex-col items-center justify-center">
+          <Spinner/>
+          <div style={{ color: 'black', fontSize: '1.5em' }} >
+            Loading... {progress.toFixed(0)}%
+          </div>
+        </div>
+      </Html>
+    )
+  }
 
   return (
     <>
@@ -53,7 +68,9 @@ function SelectDeviceView(props: SelectDeviceViewProps) {
               <ambientLight intensity={0.5} />
               <directionalLight position={[5, 5, 5]} />
               <OrbitControls enableZoom={true} />
-              <CompleteFishModel config={props.config}/>
+              <Suspense fallback={<Loader/>}>
+                <CompleteFishModel config={props.config}/>
+              </Suspense>
             </Canvas>
           </div>
           <div className="flex flex-row w-100 justify-between p-4">
