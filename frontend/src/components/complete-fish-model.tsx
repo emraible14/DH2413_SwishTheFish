@@ -16,6 +16,8 @@ export function CompleteFishModel(props: FishModelProps) {
   const armature = scene.getObjectByName('Armature')
   const tailBone = armature?.getObjectByName('tail'); 
   // const bodyBone = armature?.getObjectByName('body'); 
+  const audioRef = useRef(new Audio('/water-splash-199583.mp3'));
+
 
   useEffect(() => {
     Object.keys(materials).forEach((matName : string) => {
@@ -28,6 +30,7 @@ export function CompleteFishModel(props: FishModelProps) {
   const fishRef = useRef<Group>(null!)
   const startY = useRef<number | null>(null)
   const [swimming, setSwimming] = useState(false)
+  const [swamAway, setSwamAway] = useState(false);
   const startTime = useRef<number | null>(null)
 
   useFrame((state) => {
@@ -90,8 +93,11 @@ export function CompleteFishModel(props: FishModelProps) {
       fishRef.current!.position.set(endX, 0, endZ - distance)
       fishRef.current!.rotation.y = Math.PI // facing +Z
   
-      // Once fish is far enough, trigger exit
-      if (endZ - distance < 100) {
+      // Once fish is far enough, trigger exit but only once
+      if (endZ - distance < 100 && !swamAway) {
+        setSwamAway(true);
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
         props.onSwimAway()
       }
     }

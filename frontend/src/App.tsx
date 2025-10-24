@@ -20,13 +20,19 @@ function App() {
   const [config, setConfig] = useState<FishConfig>(defaultFish);
 
   const [ws, setWs] = useState<WebSocket | null>(null);
+  let reconnectTimeout: NodeJS.Timeout | null = null;
 
   useEffect(() => {
+    initSocket();
+  }, []);
+
+  function initSocket() {
     const websocket = new WebSocket("wss://dh2413-swishthefish.onrender.com");
     setWs(websocket)
 
     websocket.onopen = function () {
       console.log("Connected to WebSocket server", "received");
+      if (reconnectTimeout !== null) clearTimeout(reconnectTimeout);
     };
 
     websocket.onmessage = function (event) {
@@ -41,6 +47,7 @@ function App() {
 
     websocket.onclose = function () {
       console.log("Disconnected from WebSocket server", "info");
+      tryReconnect();
     };
 
     websocket.onerror = function (error) {
@@ -57,8 +64,22 @@ function App() {
         "info"
       );
     };
+  }
 
-  }, []);
+  function tryReconnect() {
+    if (reconnectTimeout !== null) return;
+      reconnectTimeout = setTimeout(() => {
+        console.log("Reconnecting...");
+        initSocket();
+      }, 3000);
+  }
+
+  // ping to keep open connection
+  setInterval(() => {
+    if (ws?.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: "ping" }));
+    }
+  }, 30000);
 
   function addFish(config: FishConfig) {
     setConfig(config);
@@ -72,15 +93,17 @@ function App() {
 
   function submitFish(config: FishConfig) {
     setConfig(config);
-    if (config) {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        // ws.send("addFish");
-        ws.send(JSON.stringify({
-            type: "fishAdded",
-            data: JSON.stringify(config),
-        }));
-        console.log(`Sent: addFish`, "sent");
-      }
+
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      tryReconnect();
+    }
+
+    if (config && (ws && ws.readyState === WebSocket.OPEN)) {
+      ws.send(JSON.stringify({
+          type: "fishAdded",
+          data: JSON.stringify(config),
+      }));
+      console.log(`Sent: addFish`, "sent");
     }
   }
 

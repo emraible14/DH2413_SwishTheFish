@@ -33,12 +33,16 @@ function SwipeView(props: SwipeViewProps) {
         <Canvas camera={{ position: [0, 20, 0], fov: 75 }}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[5, 5, 5]} />
-          <CompleteFishModel config={props.config} onSwimAway={() => {setShowReturnHome(true)}} onSwimStart={onSwimStart}/>
+          <CompleteFishModel config={props.config} onSwimAway={() => {
+            setShowReturnHome(true);
+          }} onSwimStart={onSwimStart}/>
           <OverheadCamera />
         </Canvas>
         {showReturnHome && (
           <div className="absolute inset-0 flex justify-center items-center">
-            <Button onClick={props.returnHome}>
+            <Button onClick={() => {
+              props.returnHome();
+            }}>
               Finished
             </Button>
           </div>
