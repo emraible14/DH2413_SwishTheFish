@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class BoidManager : MonoBehaviour
 {
@@ -87,9 +88,10 @@ public class BoidManager : MonoBehaviour
     void AddBoid(object data)
     {
 
-        // Default color and fish
-        Color fishColor = Color.red;
-        string fishId = "112";
+        // Default random color and fish
+        Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
+        Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
+        string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
 
         if (data != null)
         {
@@ -99,14 +101,16 @@ public class BoidManager : MonoBehaviour
             fishColor = GetColor(fish.color);
         }
 
+        Debug.Log(fishColor);
+        Debug.Log(fishId);
         StartCoroutine(FishSpawnAction(spawnProp, fishColor, fishId));
     }
 
     IEnumerator FishSpawnAction(ObjectInput prop, Color fishColor, string fishId)
     {
-        yield return new WaitForSeconds(3.0f);
         if (spawnProp != null)
         {
+            yield return new WaitForSeconds(3.0f);
             Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
             m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
 

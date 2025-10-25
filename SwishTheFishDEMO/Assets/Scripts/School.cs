@@ -142,7 +142,12 @@ public class School : MonoBehaviour
     {
         for (int i = 0; i < m_numFish; ++i)
         {
-            var boid = SpawnFish(Vector3.zero, Color.red, "112");
+            // random spawning
+            Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
+            Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
+            string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
+
+            var boid = SpawnFish(Vector3.zero, fishColor, fishId);
             yield return boid;
         }
     }
@@ -164,7 +169,10 @@ public class School : MonoBehaviour
         {
             foreach (Material mat in r.materials)
             {
-                //mat.color = fishColor;
+                if (mat.name.Substring(0, 3) != "Mat")
+                {
+                    mat.color = fishColor;
+                }
             }
         }
 
@@ -195,9 +203,14 @@ public class School : MonoBehaviour
         Debug.Log(boid.Velocity);
         boid.transform.rotation = Quaternion.LookRotation(initialDirection);
 
+        // make smaller
+        boid.transform.localScale *= 0.8f; 
+
         boid.School = this;
         boid.transform.parent = this.transform;
         boid.Camera = _camera;
+
+        boid.TailBone = boid.transform.Find("Armature/tail");
         return boid;
     }
 
