@@ -132,11 +132,11 @@ public class DiverCamera : MonoBehaviour
     // directional input
     public void DiverInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
+        horizontalInput = Input.GetAxisRaw("4th Axis");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        float triggerUp = Input.GetAxis("4th Axis");
-        float triggerDown = Input.GetAxis("5th Axis");
+        float triggerUp = Input.GetAxis("Advance");
+        float triggerDown = Input.GetAxis("Return");
 
         goUp = Input.GetKey(upKey) || triggerUp > 0.1f;
         goDown = Input.GetKey(downKey) || triggerDown > 0.1f;

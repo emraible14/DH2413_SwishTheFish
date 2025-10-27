@@ -53,6 +53,8 @@ public class BoidManager : MonoBehaviour
 
                 pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
                 pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
+                spawnProp = objectInputs.TryGetValue(TableManager.SpawnPropId, out spawnProp) ? spawnProp : null;
+
          }
          else if (surfaceFingers.Count > 0)
         {

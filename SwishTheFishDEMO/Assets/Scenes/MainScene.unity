@@ -907,7 +907,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 7.154685e+22, z: 2.484674e+27, w: 2.3011785e+11}
+  m_BoundingSphereOverride: {x: 0, y: 1192.0098, z: 0, w: 58.060425}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1662,7 +1662,7 @@ MonoBehaviour:
   diverCamera: {fileID: 1191114464}
   fallbackColor: {r: 0, g: 0, b: 1, a: 1}
   moveSpeed: 7
-  rotationSpeed: 25
+  rotationSpeed: 2500
   smoothing: 5
   movement: {x: 0, y: 0, z: 0}
   yRotation: 0
