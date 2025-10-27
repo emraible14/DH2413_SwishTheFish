@@ -44,8 +44,8 @@ function SelectDeviceView(props: SelectDeviceViewProps) {
     <>
       <div className="flex flex-col inset-0 justify-center items-center h-full">
         <div className="flex flex-col justify-center items-center">
-          <h1><b>Looking Good!</b></h1>
-          <Label className="m-6">Feel free to inspect your wonderful creation until a connection device is available</Label>
+          <h1 className="p-4"><b>Looking Good!</b></h1>
+          <Label className="mb-6">Feel free to inspect your wonderful creation until a connection device is available</Label>
           <div className="shrink-0">
 
           <Select onValueChange={(value) => selectDevice(value)}>
