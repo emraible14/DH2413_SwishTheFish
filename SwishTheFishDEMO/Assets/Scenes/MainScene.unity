@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.172768, g: 0.21589169, b: 0.29782546, a: 1}
+  m_IndirectSpecularColor: {r: 0.17276806, g: 0.21589172, b: 0.29782578, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -610,9 +610,10 @@ GameObject:
   - component: {fileID: 563746485}
   - component: {fileID: 563746487}
   - component: {fileID: 563746486}
+  - component: {fileID: 563746488}
   m_Layer: 0
   m_Name: HORNSHELL_LOW (1)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -677,6 +678,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 563746484}
   m_Mesh: {fileID: -1006454506984912816, guid: 16ac227455044b445bff425ea1ec577f, type: 3}
+--- !u!65 &563746488
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563746484}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.20191744, y: 0.10922791, z: 0.22832485}
+  m_Center: {x: 0.004547463, y: 0.050635353, z: -0.0047765756}
 --- !u!1 &575529402
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,7 +921,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 1, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 1192.0098, z: 0, w: 58.060425}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1272,7 +1286,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1006458013}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 200, y: 30, z: 100}
@@ -1334,9 +1348,10 @@ GameObject:
   - component: {fileID: 1079029578}
   - component: {fileID: 1079029580}
   - component: {fileID: 1079029579}
+  - component: {fileID: 1079029581}
   m_Layer: 0
   m_Name: DarkCoralls2
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1401,6 +1416,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1079029577}
   m_Mesh: {fileID: -1332913011449350072, guid: 0f1390f19927264428fc64edb21b9283, type: 3}
+--- !u!65 &1079029581
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079029577}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 15.483188, y: 13.170308, z: 2.696557}
+  m_Center: {x: 0.24463482, y: -1.5657206, z: 0.9780457}
 --- !u!1 &1081918876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1582,7 +1610,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1191114465}
   - component: {fileID: 1191114464}
-  - component: {fileID: 1191114463}
   - component: {fileID: 1191114466}
   m_Layer: 0
   m_Name: Diver Camera
@@ -1671,7 +1698,7 @@ MonoBehaviour:
   diverCamera: {fileID: 1191114464}
   sceneCamera: {fileID: 963194227}
   moveSpeed: 7
-  rotationSpeed: 20
+  rotationSpeed: 2500
   smoothing: 5
   maxDistance: 25
   upKey: 99
@@ -2038,9 +2065,10 @@ GameObject:
   - component: {fileID: 1530698810}
   - component: {fileID: 1530698812}
   - component: {fileID: 1530698811}
+  - component: {fileID: 1530698813}
   m_Layer: 0
   m_Name: DarkCoralls1
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2105,6 +2133,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530698809}
   m_Mesh: {fileID: -1332913011449350072, guid: 0f1390f19927264428fc64edb21b9283, type: 3}
+--- !u!65 &1530698813
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530698809}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 15.5583105, y: 12.949752, z: 2.6619117}
+  m_Center: {x: -0.69212955, y: -0.39242125, z: 0.9607228}
 --- !u!1 &1680745099
 GameObject:
   m_ObjectHideFlags: 0
@@ -2813,13 +2854,27 @@ GameObject:
   - component: {fileID: 5872323612830027645}
   - component: {fileID: 4044067957034871507}
   - component: {fileID: 2281105276007183710}
+  - component: {fileID: 2047924759977575852}
   m_Layer: 0
   m_Name: CONCH_LOW
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &2047924759977575852
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047924759977575851}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.36095625, y: 0.22238098, z: 0.29558834}
+  m_Center: {x: 0.018155579, y: 0.110255376, z: 0.042884238}
 --- !u!23 &2281105276007183710
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2975,13 +3030,27 @@ GameObject:
   - component: {fileID: 2833164103024541958}
   - component: {fileID: 1118305193266291756}
   - component: {fileID: 5112577360773084185}
+  - component: {fileID: 3114814834300360735}
   m_Layer: 0
   m_Name: SNAIL_LOW
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &3114814834300360735
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3114814834300360734}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.2745203, y: 0.16108075, z: 0.24541037}
+  m_Center: {x: -0.012041638, y: 0.080589324, z: -0.0064948318}
 --- !u!4 &3215524828994066587
 Transform:
   m_ObjectHideFlags: 0
@@ -2989,13 +3058,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7346667309880533321}
-  m_LocalRotation: {x: -0.6531778, y: 0.27084827, z: 0.27084827, w: 0.6531778}
-  m_LocalPosition: {x: 75.23639, y: -6.39985, z: -5.7501054}
+  m_LocalRotation: {x: -0.6532815, y: 0.27059805, z: 0.27059805, w: 0.6532815}
+  m_LocalPosition: {x: 75.23639, y: -6.4, z: -5.7501054}
   m_LocalScale: {x: 9.258419, y: 9.25842, z: 9.258419}
   m_Children: []
   m_Father: {fileID: 6354890383616847776}
   m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 45}
 --- !u!4 &3569345323222740373
 Transform:
   m_ObjectHideFlags: 0
@@ -3059,13 +3128,28 @@ GameObject:
   - component: {fileID: 6961074944816316542}
   - component: {fileID: 2823592806456576683}
   - component: {fileID: 5509484158229207293}
+  - component: {fileID: 3953260828516588288}
   m_Layer: 0
   m_Name: Seaweed
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!136 &3953260828516588288
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3953260828516588287}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 27.375284
+  m_Height: 67.03899
+  m_Direction: 0
+  m_Center: {x: -31.365509, y: -12.174785, z: -1.531541}
 --- !u!33 &4044067957034871507
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3093,13 +3177,27 @@ GameObject:
   - component: {fileID: 3569345323222740373}
   - component: {fileID: 4150447726313986596}
   - component: {fileID: 6084989741116345367}
+  - component: {fileID: 4110995543550966752}
   m_Layer: 0
   m_Name: FunCoralls2
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &4110995543550966752
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4110995543550966751}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.353648, y: 6.7650094, z: 1.5034502}
+  m_Center: {x: 0.3616137, y: 0.011754213, z: 0.72621137}
 --- !u!33 &4150447726313986596
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3209,6 +3307,7 @@ GameObject:
   - component: {fileID: 5040288447867923311}
   - component: {fileID: 6805538606439030368}
   - component: {fileID: 2665940915172583483}
+  - component: {fileID: 4738296203390842555}
   m_Layer: 0
   m_Name: HORNSHELL_LOW
   m_TagString: Untagged
@@ -3216,6 +3315,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &4738296203390842555
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4738296203390842554}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.20191744, y: 0.109227896, z: 0.22832483}
+  m_Center: {x: 0.0045472234, y: 0.050635353, z: -0.0047766976}
 --- !u!4 &5006512735187214803
 Transform:
   m_ObjectHideFlags: 0
@@ -3327,13 +3439,27 @@ GameObject:
   - component: {fileID: 7398513816474324375}
   - component: {fileID: 839019567507420996}
   - component: {fileID: 4555564281903101032}
+  - component: {fileID: 5254527675271359868}
   m_Layer: 0
   m_Name: FunCoralls1
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &5254527675271359868
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5254527675271359867}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.8854365, y: 6.364034, z: 1.735831}
+  m_Center: {x: 0.068825774, y: -0.18826202, z: 0.84423447}
 --- !u!23 &5262241132560065162
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3383,13 +3509,27 @@ GameObject:
   - component: {fileID: 577098411380931795}
   - component: {fileID: 3813054811538627626}
   - component: {fileID: 7302994112030114015}
+  - component: {fileID: 5446677734515056995}
   m_Layer: 0
   m_Name: CLAM_LOW
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &5446677734515056995
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5446677734515056994}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.19488955, y: 0.038079813, z: 0.19113117}
+  m_Center: {x: 0.07941819, y: 0.018953625, z: -0.036509354}
 --- !u!23 &5509484158229207293
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3439,13 +3579,27 @@ GameObject:
   - component: {fileID: 6013550229595918667}
   - component: {fileID: 3670280369703393107}
   - component: {fileID: 135334778654371022}
+  - component: {fileID: 5565299354028034819}
   m_Layer: 0
   m_Name: Anchor
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &5565299354028034819
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5565299354028034818}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.7673252, y: 1.0577554, z: 4.308112}
+  m_Center: {x: 0.0000014243215, y: -0.41540137, z: 1.859682}
 --- !u!1 &5615451191229092949
 GameObject:
   m_ObjectHideFlags: 0
@@ -3457,13 +3611,27 @@ GameObject:
   - component: {fileID: 5743606156058870292}
   - component: {fileID: 1447564621513998030}
   - component: {fileID: 1574701870713416491}
+  - component: {fileID: 5615451191229092950}
   m_Layer: 0
   m_Name: Coral_Low
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &5615451191229092950
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5615451191229092949}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.3869103, y: 0.26747233, z: 0.33696017}
+  m_Center: {x: 0.022106402, y: 0.1334866, z: 0.012357614}
 --- !u!4 &5743606156058870292
 Transform:
   m_ObjectHideFlags: 0
@@ -3503,13 +3671,27 @@ GameObject:
   - component: {fileID: 3742335124812475711}
   - component: {fileID: 2940025058527255926}
   - component: {fileID: 3031024131427451385}
+  - component: {fileID: 5897683067463429113}
   m_Layer: 0
   m_Name: Rock5
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &5897683067463429113
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5897683067463429112}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 16.477793, y: 13.812056, z: 18.560919}
+  m_Center: {x: 0.20234893, y: -0.8887636, z: 0.9495731}
 --- !u!4 &6013550229595918667
 Transform:
   m_ObjectHideFlags: 0
@@ -3633,13 +3815,27 @@ GameObject:
   - component: {fileID: 4429809944680174988}
   - component: {fileID: 1072349567477344074}
   - component: {fileID: 1905528499892860548}
+  - component: {fileID: 6873558481513103160}
   m_Layer: 0
   m_Name: Rock4
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &6873558481513103160
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6873558481513103159}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 17.235455, y: 23.756035, z: 20.460062}
+  m_Center: {x: 0.32846636, y: -0.17128614, z: 0.0000014305115}
 --- !u!4 &6961074944816316542
 Transform:
   m_ObjectHideFlags: 0
@@ -3711,13 +3907,27 @@ GameObject:
   - component: {fileID: 3215524828994066587}
   - component: {fileID: 6621003223603488220}
   - component: {fileID: 1029149368147222082}
+  - component: {fileID: 7346667309880533322}
   m_Layer: 0
   m_Name: Boat
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &7346667309880533322
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7346667309880533321}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.524332, y: 6.6960545, z: 2.3362265}
+  m_Center: {x: 2.696661, y: -1.9653976, z: 1.0602926}
 --- !u!1 &7369183279190601808
 GameObject:
   m_ObjectHideFlags: 0
@@ -3729,13 +3939,27 @@ GameObject:
   - component: {fileID: 8519439131643666881}
   - component: {fileID: 8930573672299626634}
   - component: {fileID: 8153886041254746598}
+  - component: {fileID: 7369183279190601809}
   m_Layer: 0
   m_Name: Rock6
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &7369183279190601809
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7369183279190601808}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 15.654011, y: 23.116756, z: 28.041552}
+  m_Center: {x: -0.91310674, y: -1.0351921, z: -1.2526239}
 --- !u!4 &7398513816474324375
 Transform:
   m_ObjectHideFlags: 0
@@ -3761,13 +3985,27 @@ GameObject:
   - component: {fileID: 6524861117810562882}
   - component: {fileID: 7299765511157225062}
   - component: {fileID: 490281732111200657}
+  - component: {fileID: 7604608281041869471}
   m_Layer: 0
   m_Name: Rock3
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &7604608281041869471
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7604608281041869470}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.930544, y: 18.259531, z: 19.25929}
+  m_Center: {x: -2.4788964, y: -0.0000086544305, z: 0.6003815}
 --- !u!23 &7718390321889282750
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3833,13 +4071,27 @@ GameObject:
   - component: {fileID: 8257769814837676137}
   - component: {fileID: 3904968596910096259}
   - component: {fileID: 5262241132560065162}
+  - component: {fileID: 8137692136828578084}
   m_Layer: 0
   m_Name: Rock2
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &8137692136828578084
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8137692136828578083}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 23.36788, y: 16.985752, z: 20.460064}
+  m_Center: {x: -0.2698677, y: 0.30674124, z: -0.0000019073486}
 --- !u!23 &8153886041254746598
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3903,13 +4155,27 @@ GameObject:
   - component: {fileID: 5006512735920508017}
   - component: {fileID: 4044710142293177927}
   - component: {fileID: 7718390321889282750}
+  - component: {fileID: 8296172668069363299}
   m_Layer: 0
   m_Name: Terracota
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &8296172668069363299
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8296172668069363298}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5673334, y: 1.6273346, z: 0.5691146}
+  m_Center: {x: 0.0023658567, y: 0.81467986, z: -0.07287836}
 --- !u!1 &8296172669349090240
 GameObject:
   m_ObjectHideFlags: 0
@@ -3937,13 +4203,27 @@ GameObject:
   - component: {fileID: 5189119532835592276}
   - component: {fileID: 202929151612303317}
   - component: {fileID: 4692467418520728437}
+  - component: {fileID: 8461590651130050785}
   m_Layer: 0
   m_Name: Rock1
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &8461590651130050785
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8461590651130050784}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 11.203804, y: 14.592187, z: 22.922302}
+  m_Center: {x: -0.018486267, y: 1.634596, z: -1.5103754}
 --- !u!4 &8519439131643666881
 Transform:
   m_ObjectHideFlags: 0

@@ -142,7 +142,12 @@ public class School : MonoBehaviour
     {
         for (int i = 0; i < m_numFish; ++i)
         {
-            var boid = SpawnFish(Vector3.zero, Color.red, "112");
+            // random spawning
+            Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
+            Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
+            string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
+
+            var boid = SpawnFish(Vector3.zero, fishColor, fishId);
             yield return boid;
         }
     }
@@ -160,20 +165,30 @@ public class School : MonoBehaviour
 
         // update fish color
         SkinnedMeshRenderer[] renderers = boid.GetComponentsInChildren<SkinnedMeshRenderer>();
-        foreach (SkinnedMeshRenderer rend in renderers)
+        foreach (SkinnedMeshRenderer r in renderers)
         {
-            foreach (Material mat in rend.materials)
+            foreach (Material mat in r.materials)
             {
-                mat.color = fishColor;
+                if (mat.name.Substring(0, 3) != "Mat")
+                {
+                    mat.color = fishColor;
+                }
             }
         }
+
+        SkinnedMeshRenderer rend = boid.GetComponentInChildren<SkinnedMeshRenderer>();
+        for (int i = 2; i < rend.materials.Length; i++)
+        {
+            Material mat = rend.materials[i];
+            mat.color = fishColor;
+        }
+        //rend.materials[1].color = Color.black;
 
         return boid;
     }
 
     public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
     {
-
         Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
         for (int j = 0; j < 3; ++j)
@@ -181,16 +196,60 @@ public class School : MonoBehaviour
 
         Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
 
-        boid.Position = spawnPoint;
+        // add rigidbody
+        Rigidbody rb = boid.gameObject.GetComponent<Rigidbody>();
+        if (rb == null)
+            rb = boid.gameObject.AddComponent<Rigidbody>();
 
+        rb.useGravity = false;
+        rb.isKinematic = true;
+        rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // add collider 
+        CapsuleCollider collider = boid.GetComponent<CapsuleCollider>();
+        if (collider == null)
+        {
+            collider = boid.gameObject.AddComponent<CapsuleCollider>();
+        }
+        collider.direction = 2; // along Z axis
+        collider.isTrigger = true;
+
+        Renderer rend = boid.GetComponentInChildren<Renderer>();
+        if (rend != null)
+        {
+            Vector3 localSize = rend.bounds.size;
+            Vector3 localCenter = boid.transform.InverseTransformPoint(rend.bounds.center);
+
+            // Fit capsule roughly to the length and thickness of the mesh
+            collider.height = localSize.z + 2.0f;          // along forward axis, with a little extra padding
+            collider.radius = Mathf.Max(localSize.x, localSize.y) * 0.5f;  // half width/height
+            collider.center = localCenter;
+        }
+        else
+        {
+            // Defaults
+            collider.radius = 2.5f;
+            collider.height = 15.0f;
+            collider.center = Vector3.zero;
+        }
+
+        // set position and velocity
+        boid.Position = spawnPoint;
         Vector3 initialDirection = Vector3.forward;
         boid.Velocity = initialDirection * MinSpeed;
-        Debug.Log(boid.Velocity);
-        boid.transform.rotation = Quaternion.LookRotation(initialDirection);
+        // boid.transform.rotation = Quaternion.LookRotation(initialDirection);
 
+        // make smaller
+        boid.transform.localScale *= 0.8f; 
+
+        // set tag, school, camera, tailbone
+        boid.tag = "Fish";
+        boid.gameObject.layer = LayerMask.NameToLayer("Fish");
         boid.School = this;
         boid.transform.parent = this.transform;
         boid.Camera = _camera;
+        boid.TailBone = boid.transform.Find("Armature/tail");
+
         return boid;
     }
 

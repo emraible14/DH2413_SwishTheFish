@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using static Microsoft.Surface.NativeWrappers.NativeMethods;
 using static UnityEngine.GraphicsBuffer;
+using Object = System.Object;
 
 public class DiverCamera : MonoBehaviour
 {
@@ -48,6 +49,8 @@ public class DiverCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        TableManager.Instance.OnTouch += OnTouchReceive;
+
         camera = Camera.main;
         diverPos = transform.position;
         diverCamera.enabled = true;
@@ -71,6 +74,12 @@ public class DiverCamera : MonoBehaviour
         StartTransition();
         DiverInput();
         MoveCamera();
+
+        //PrintControllerInputs();
+    }
+    void LateUpdate()
+    {
+
     }
 
     void FixedUpdate()
@@ -183,10 +192,14 @@ public class DiverCamera : MonoBehaviour
 
     public void DiverInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
+        horizontalInput = Input.GetAxisRaw("4th Axis");
         verticalInput = Input.GetAxisRaw("Vertical");
-        goUp = Input.GetKey(upKey);
-        goDown = Input.GetKey(downKey);
+
+        float triggerUp = Input.GetAxis("Advance");
+        float triggerDown = Input.GetAxis("Return");
+
+        goUp = Input.GetKey(upKey) || triggerUp > 0.1f;
+        goDown = Input.GetKey(downKey) || triggerDown > 0.1f;
     }
 
     public void MoveCamera()
@@ -224,9 +237,9 @@ public class DiverCamera : MonoBehaviour
         yRotation += turnY;
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
-        float xBounded = Mathf.Clamp(targetCamPos.x, -60, 60);
+        float xBounded = Mathf.Clamp(targetCamPos.x, -80, 80);
         float yBounded = Mathf.Clamp(targetCamPos.y, -25, 10);
-        float zBounded = Mathf.Clamp(targetCamPos.z, -35, 35);
+        float zBounded = Mathf.Clamp(targetCamPos.z, -45, 45);
         targetCamPos = new Vector3(xBounded, yBounded, zBounded);
 
         transform.position = Vector3.Lerp(transform.position, targetCamPos, smoothing * Time.deltaTime);

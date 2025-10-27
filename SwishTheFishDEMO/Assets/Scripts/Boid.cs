@@ -15,10 +15,18 @@ public class Boid : MonoBehaviour
     public Vector3 Acceleration;
 
     public Camera Camera;
-    
+
+    public float TailAmplitude = 0.2f;
+    public float WiggleAmplitude = 3f;
+    public float WiggleFrequency = 4f;
+    private float wiggleOffset;
+
+    public Transform TailBone;
+
     private void Start()
     {
         Velocity = Random.insideUnitSphere * 2;
+        wiggleOffset = Random.Range(0f, Mathf.PI * 2f);
     }
 
     public void UpdateSimulation(float deltaTime, List<ObjectInput> props)
@@ -29,13 +37,14 @@ public class Boid : MonoBehaviour
         Acceleration += (Vector3)School.GetForceFromBounds(this);
         Acceleration += GetConstraintSpeedForce();
         Acceleration += GetSteeringForce();
-        
+
         foreach (var prop in props.Where(prop => prop != null))
         {
             if (prop.tagValue == TableManager.PullPropId)
             {
                 Acceleration += PropPullForce(Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(Camera, prop.position)));
-            } else if (prop.tagValue == TableManager.PushPropId)
+            }
+            else if (prop.tagValue == TableManager.PushPropId)
             {
                 Acceleration += PropRepelForce(Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(Camera, prop.position)));
             }
@@ -44,10 +53,47 @@ public class Boid : MonoBehaviour
                 Acceleration += PropPullForce(Helpers.GetWorldPositionOnPlane(Camera, prop.position));
             }
         }
-        
+
         //Step simulation
         Velocity += deltaTime * Acceleration;
-        Position +=  0.5f * deltaTime * deltaTime * Acceleration + deltaTime * Velocity;
+        Position += 0.5f * deltaTime * deltaTime * Acceleration + deltaTime * Velocity;
+        
+        // Body wiggle
+        float wiggleAngle = Mathf.Sin(Time.time * WiggleFrequency + wiggleOffset) * WiggleAmplitude;
+        if (Velocity.sqrMagnitude > 0.001f)
+        {
+            Quaternion moveRotation = Quaternion.LookRotation(Velocity.normalized, Vector3.up);
+            Quaternion wiggleRotation = Quaternion.AngleAxis(wiggleAngle, Vector3.up);
+            transform.rotation = moveRotation * wiggleRotation;
+        }
+
+        // tail wiggle
+        if (TailBone)
+        {
+            float tailRotationZ = Mathf.Sin(Time.time * WiggleFrequency + Mathf.PI / 4f) * TailAmplitude;
+            Vector3 tailEuler = TailBone.localEulerAngles;
+            tailEuler.z = tailRotationZ * Mathf.Rad2Deg; // convert radians to degrees
+            TailBone.localEulerAngles = tailEuler;
+        }
+
+        transform.position = Position;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Obstacle") && other != null && other != GetComponent<Collider>())
+        {
+            Vector3 away = transform.position - other.transform.position;
+            away.y = 0f; // keep on horizontal plane if desired
+            float distance = away.magnitude;
+
+            // Normalize and scale avoidance based on distance
+            if (distance > 0.001f)
+            {
+                Vector3 avoidanceForce = away.normalized * (1f / distance) * 2f;
+                Velocity += avoidanceForce * Time.deltaTime;
+            }
+        }
     }
 
     Vector3 PropPullForce(Vector3 propPosition)
@@ -188,5 +234,15 @@ public class Boid : MonoBehaviour
         }
 
         return force;
+    }
+
+    public Vector3 PublicGetSteeringForce()
+    {
+        return GetSteeringForce();
+    }
+
+    public Vector3 PublicGetConstraintSpeedForce()
+    {
+        return GetConstraintSpeedForce();
     }
 }

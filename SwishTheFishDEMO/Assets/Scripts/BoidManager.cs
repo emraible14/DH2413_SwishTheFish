@@ -4,10 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class BoidManager : MonoBehaviour
 {
     private List<Boid> m_boids;
+    private List<Boid> to_remove;
 
     private School[] schools;
 
@@ -30,6 +32,7 @@ public class BoidManager : MonoBehaviour
     private void Start()
     {
         m_boids = new List<Boid>();
+        to_remove = new List<Boid>();
         
         camera = Camera.main;
 
@@ -43,13 +46,15 @@ public class BoidManager : MonoBehaviour
         TableManager.Instance.OnTouch += OnTouchReceive;
     }
 
-     private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
+    private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
      {
          if (objectInputs.Count > 0)
          {
 
                 pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
                 pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
+                spawnProp = objectInputs.TryGetValue(TableManager.SpawnPropId, out spawnProp) ? spawnProp : null;
+
          }
          else if (surfaceFingers.Count > 0)
         {
@@ -65,8 +70,6 @@ public class BoidManager : MonoBehaviour
             spawnProp = null;
          }
      }
-
-   
 
     public int GetNumBoids()
     {
@@ -87,13 +90,13 @@ public class BoidManager : MonoBehaviour
     void AddBoid(object data)
     {
 
-        // Default color and fish
-        Color fishColor = Color.red;
-        string fishId = "112";
+        // Default random color and fish
+        Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
+        Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
+        string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
 
         if (data != null)
         {
-            Debug.Log((string)data);
             FishData fish = JsonUtility.FromJson<FishData>((string)data);
             fishId = fish.headId + fish.bodyId + fish.tailId;
             fishColor = GetColor(fish.color);
@@ -104,9 +107,9 @@ public class BoidManager : MonoBehaviour
 
     IEnumerator FishSpawnAction(ObjectInput prop, Color fishColor, string fishId)
     {
-        yield return new WaitForSeconds(3.0f);
         if (spawnProp != null)
         {
+            yield return new WaitForSeconds(3.0f);
             Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
             m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
 
@@ -141,6 +144,9 @@ public class BoidManager : MonoBehaviour
         {
             boid.UpdateSimulation(Time.fixedDeltaTime, props);
         }
+
+        EliminateFishes();
+        SwimOff();
     }
 
     public IEnumerable<Boid> GetNeighbors(Boid boid, float radius)
@@ -150,6 +156,60 @@ public class BoidManager : MonoBehaviour
         {
             if (other != boid && (other.Position - boid.Position).sqrMagnitude < radiusSq)
                 yield return other;
+        }
+    }
+
+    public void EliminateFishes()
+    {
+        int n_boids = GetNumBoids();
+        int max_boids = 10;
+        if (n_boids > max_boids)
+        {
+            int diff = n_boids - max_boids;
+            for (int i = 0; i < diff; i++)
+            {
+                // Debug.Log("Removing a fish");
+                to_remove.Add(m_boids[0]);
+                m_boids.RemoveAt(0);
+            }
+        }
+    }
+
+    public void SwimOff()
+    {
+        int n_toRemove = to_remove.Count();
+        if (n_toRemove < 1) return;
+
+        float deltaTime = Time.fixedDeltaTime;
+
+        for (int i = 0; i < n_toRemove; i++)
+        {
+            Boid bi = to_remove[i];
+
+            bi.Acceleration = Vector3.zero;
+            bi.Acceleration += (Vector3)bi.School.GetForceFromBounds(bi);
+            bi.Acceleration += bi.PublicGetConstraintSpeedForce();
+            bi.Acceleration += bi.PublicGetSteeringForce();
+            bi.Acceleration *= 0.01f;
+            bi.Velocity += deltaTime * bi.Acceleration;
+            bi.Velocity.y = 0f;
+            bi.Velocity *= 1.02f;
+            bi.Position += 0.5f * deltaTime * deltaTime * bi.Acceleration + deltaTime * bi.Velocity;
+            // make advance
+            // if out of bounds, kill
+        }
+
+        int offset = 0;
+        for (int i = 0; i < n_toRemove; i++)
+        {
+            Boid bi = to_remove[i - offset];
+            if (Mathf.Abs(bi.Position.x) > 200f || Mathf.Abs(bi.Position.z) > 100f)
+            {
+                Destroy(bi.gameObject);
+                to_remove.RemoveAt(i - offset);
+                offset++;
+            }
+            // remove here
         }
     }
 }

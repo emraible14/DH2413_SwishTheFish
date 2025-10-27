@@ -13,6 +13,7 @@ public class PropCursor : MonoBehaviour
     private MeshRenderer meshRenderer;
     ObjectInput pushProp;
     ObjectInput pullProp;
+    ObjectInput spawnProp;
     ObjectInput mouseProp;
     ObjectInput diverProp;
 
@@ -40,54 +41,19 @@ public class PropCursor : MonoBehaviour
         
         fishIsColliding = true;
         lastFishCollisionTime = Time.time;
-        if (meshRenderer.material.color != Color.red) meshRenderer.material.color = Color.red;
+        if (meshRenderer.material.color != Color.green) meshRenderer.material.color = Color.green;
     }
 
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
     {
         if (objectInputs.Count > 0)
-        {
-            // foreach (KeyValuePair<int, ObjectInput> entry in objectInputs)
-            // {
-            //     if (entry.Value.tagValue == TableManager.PushPropId)
-            //     {
-            //         pushProp = entry.Value;
-            //     }
-            //     else
-            //     {
-            //         pushProp = null;
-            //     }
-            //
-            //     if (entry.Value.tagValue == TableManager.PullPropId)
-            //     {
-            //         pullProp = entry.Value;
-            //     }
-            //     else
-            //     {
-            //         pullProp = null;
-            //     }
-            //
-            //     if (entry.Value.tagValue == TableManager.MouseId)
-            //     {
-            //         mouseProp = entry.Value;
-            //     }
-            //     else
-            //     {
-            //         mouseProp = null;
-            //     }
-            // }
-
-            //ObjectInput localPushProp;
-            //if (objectInputs.TryGetValue(TableManager.PushPropId, out localPushProp)) {
-              //  pushProp = localPushProp;
-                //Debug.Log(localPushProp.tagValue);
-            //}
-            
+        {   
             pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
             pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
+            spawnProp = objectInputs.TryGetValue(TableManager.SpawnPropId, out spawnProp) ? spawnProp : null;
             mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
             diverProp = objectInputs.TryGetValue(TableManager.DiverId, out diverProp) ? diverProp : null;
-
+            
             //Debug.Log(pullProp);
         }
     }
@@ -127,6 +93,13 @@ public class PropCursor : MonoBehaviour
             if (!meshRenderer.enabled) meshRenderer.enabled = true;
             meshRenderer.material.color = Color.blue;
             transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pushProp.position));
+            transform.localScale = new Vector3(5, 5, 5);
+        }
+        else if (spawnProp != null)
+        {
+            if (!meshRenderer.enabled) meshRenderer.enabled = true;
+            meshRenderer.material.color = Color.green;
+            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
             transform.localScale = new Vector3(5, 5, 5);
         }
         // else if (mouseProp != null)
