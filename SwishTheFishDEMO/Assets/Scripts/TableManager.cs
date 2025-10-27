@@ -14,7 +14,7 @@ public class TableManager : MonoBehaviour
 {
     public static TableManager Instance { get; private set; }
 
-    public static int SpawnPropId = 4;
+    public static int SpawnPropId = 4 | 5;
     public const int DiverId = 3;
     public const int PullPropId = 2;
     public const int PushPropId = 1;

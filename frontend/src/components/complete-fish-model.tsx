@@ -6,8 +6,8 @@ import type { Group } from 'three';
 
 interface FishModelProps {
   config: FishConfig,
-  onSwimStart?: () => void;
   onSwimAway?: () => void;
+  swimming: boolean;
 }
 
 export function CompleteFishModel(props: FishModelProps) {
@@ -28,8 +28,6 @@ export function CompleteFishModel(props: FishModelProps) {
   }, [materials, props])
 
   const fishRef = useRef<Group>(null!)
-  const startY = useRef<number | null>(null)
-  const [swimming, setSwimming] = useState(false)
   const [swamAway, setSwamAway] = useState(false);
   const startTime = useRef<number | null>(null)
 
@@ -38,15 +36,12 @@ export function CompleteFishModel(props: FishModelProps) {
     // wiggle speed and amplitude
     const frequency = 4   // how fast the fish wiggles
     const tailAmp   = 0.2 // radians (~17°)
-    // const bodyAmp = 0.05;
-
-    // bodyBone.rotation.z = Math.sin(t * frequency) * bodyAmp
 
     if (tailBone) {
       tailBone.rotation.z = Math.sin(t * frequency + Math.PI / 4) * tailAmp
     } 
 
-    if (!swimming || !props.onSwimAway) {
+    if (!props.swimming || !props.onSwimAway) {
       const wiggle = Math.sin(t * frequency) * 0.05 // 3° sway
       fishRef.current.rotation.y = wiggle
       return;
@@ -109,18 +104,6 @@ export function CompleteFishModel(props: FishModelProps) {
   return (
     <group 
       ref={fishRef} 
-      onPointerDown={(e) => {
-        startY.current = e.clientY // record where swipe started
-      }}
-      onPointerUp={() => {
-        if (startY.current !== null && props.onSwimStart) {
-          // const deltaY = e.clientY - startY.current
-          // if (deltaY < -2) { // user dragged upward
-            setSwimming(true);
-            props.onSwimStart();
-          // }
-        }
-      }}
       >
       <Center>
         <primitive object={scene} />

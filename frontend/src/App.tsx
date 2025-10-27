@@ -119,7 +119,6 @@ function App() {
         {(viewState == 1) && <FishDesignerView config={config} addFish={addFish} goBack={() => setViewState(0)}></FishDesignerView>}
         {(viewState == 2) && <SelectDeviceView config={config} connected={true} goBack={() => setViewState(1)} updateDevice={updateDevice}></SelectDeviceView>}
         {(viewState == 3) && <SwipeView submitFish={submitFish} config={config} returnHome={returnHome}></SwipeView>}
-
       </div>
          </>
   )

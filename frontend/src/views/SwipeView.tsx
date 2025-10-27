@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 import type { FishConfig } from "@/utils/types";
 import { Canvas } from "@react-three/fiber";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface SwipeViewProps {
   submitFish: (config: FishConfig) => void;
@@ -16,15 +16,33 @@ function SwipeView(props: SwipeViewProps) {
 
   const [showReturnHome, setShowReturnHome] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
+  const [swimTriggered, setSwimTriggered] = useState(false);
+  const touchStartY = useRef<number | null>(null);
 
-  function onSwimStart() {
-    setShowInstructions(false);
-    props.submitFish(props.config);
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartY.current = e.touches[0].clientY;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartY.current === null) return;
+    const endY = e.changedTouches[0].clientY;
+    const deltaY = endY - touchStartY.current;
+
+    // If user swiped up by at least 30px
+    if (deltaY < -30 && !swimTriggered) {
+      setSwimTriggered(true);
+      setShowInstructions(false);
+      props.submitFish(props.config);
+    }
+
+    touchStartY.current = null;
   }
 
   return (
     <>
-      <div style={{height: '100vh', width: '100%', touchAction: 'none'}}>
+      <div style={{height: '100vh', width: '100%', touchAction: 'none'}} 
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}>
         {showInstructions && (
           <div className="absolute inset-0 flex justify-center pt-10">
             <h1><b>Swipe to Swish your Fish!</b></h1>
@@ -35,7 +53,7 @@ function SwipeView(props: SwipeViewProps) {
           <directionalLight position={[5, 5, 5]} />
           <CompleteFishModel config={props.config} onSwimAway={() => {
             setShowReturnHome(true);
-          }} onSwimStart={onSwimStart}/>
+          }} swimming={swimTriggered}/>
           <OverheadCamera />
         </Canvas>
         {showReturnHome && (
