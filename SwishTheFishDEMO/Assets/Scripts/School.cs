@@ -196,21 +196,60 @@ public class School : MonoBehaviour
 
         Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
 
-        boid.Position = spawnPoint;
+        // add rigidbody
+        Rigidbody rb = boid.gameObject.GetComponent<Rigidbody>();
+        if (rb == null)
+            rb = boid.gameObject.AddComponent<Rigidbody>();
 
+        rb.useGravity = false;
+        rb.isKinematic = true;
+        rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // add collider 
+        CapsuleCollider collider = boid.GetComponent<CapsuleCollider>();
+        if (collider == null)
+        {
+            collider = boid.gameObject.AddComponent<CapsuleCollider>();
+        }
+        collider.direction = 2; // along Z axis
+        collider.isTrigger = true;
+
+        Renderer rend = boid.GetComponentInChildren<Renderer>();
+        if (rend != null)
+        {
+            Vector3 localSize = rend.bounds.size;
+            Vector3 localCenter = boid.transform.InverseTransformPoint(rend.bounds.center);
+
+            // Fit capsule roughly to the length and thickness of the mesh
+            collider.height = localSize.z + 2.0f;          // along forward axis, with a little extra padding
+            collider.radius = Mathf.Max(localSize.x, localSize.y) * 0.5f;  // half width/height
+            collider.center = localCenter;
+        }
+        else
+        {
+            // Defaults
+            collider.radius = 2.5f;
+            collider.height = 15.0f;
+            collider.center = Vector3.zero;
+        }
+
+        // set position and velocity
+        boid.Position = spawnPoint;
         Vector3 initialDirection = Vector3.forward;
         boid.Velocity = initialDirection * MinSpeed;
-        Debug.Log(boid.Velocity);
-        boid.transform.rotation = Quaternion.LookRotation(initialDirection);
+        // boid.transform.rotation = Quaternion.LookRotation(initialDirection);
 
         // make smaller
         boid.transform.localScale *= 0.8f; 
 
+        // set tag, school, camera, tailbone
+        boid.tag = "Fish";
+        boid.gameObject.layer = LayerMask.NameToLayer("Fish");
         boid.School = this;
         boid.transform.parent = this.transform;
         boid.Camera = _camera;
-
         boid.TailBone = boid.transform.Find("Armature/tail");
+
         return boid;
     }
 

@@ -97,14 +97,11 @@ public class BoidManager : MonoBehaviour
 
         if (data != null)
         {
-            Debug.Log((string)data);
             FishData fish = JsonUtility.FromJson<FishData>((string)data);
             fishId = fish.headId + fish.bodyId + fish.tailId;
             fishColor = GetColor(fish.color);
         }
 
-        Debug.Log(fishColor);
-        Debug.Log(fishId);
         StartCoroutine(FishSpawnAction(spawnProp, fishColor, fishId));
     }
 
@@ -171,7 +168,7 @@ public class BoidManager : MonoBehaviour
             int diff = n_boids - max_boids;
             for (int i = 0; i < diff; i++)
             {
-                Debug.Log("Removing a fish");
+                // Debug.Log("Removing a fish");
                 to_remove.Add(m_boids[0]);
                 m_boids.RemoveAt(0);
             }
