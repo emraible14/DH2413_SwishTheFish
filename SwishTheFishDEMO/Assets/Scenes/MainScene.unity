@@ -1705,7 +1705,8 @@ MonoBehaviour:
   maxDistance: 25
   upKey: 99
   downKey: 304
-  transitionDuration: 1
+  transitionDuration: 2.5
+  transitionDelay: 2
 --- !u!1 &1295059255
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,8 +14,8 @@ public class PropCursor : MonoBehaviour
     ObjectInput objectInput;
     private Camera camera;
     private MeshRenderer meshRenderer;
-    ObjectInput pushProp;
     ObjectInput pullProp;
+    ObjectInput pushProp;
     ObjectInput spawnProp1;
     ObjectInput spawnProp2;
     ObjectInput mouseProp;
@@ -84,7 +84,7 @@ public class PropCursor : MonoBehaviour
         List<Color> colors = new List<Color> { Color.black, Color.blue, Color.green, Color.green, Color.yellow };
         for (int i = 0; i < colors.Count; i++)
         {
-            GameObject cursor_i = Instantiate(propCursorPrefab, Vector3.zero, Quaternion.identity);
+            GameObject cursor_i = Instantiate(propCursorPrefab, Vector3.zero, Quaternion.Euler(90, 90, 0));
             MeshRenderer mesh_i = cursor_i.GetComponent<MeshRenderer>();
             mesh_i.enabled = false;
             mesh_i.material.color = colors[i];
@@ -104,7 +104,8 @@ public class PropCursor : MonoBehaviour
 
         if ((pullProp != null || mouseProp != null))
         {
-            EnableCursor(0, pullProp, new Vector3(6, 2, 2));
+            if (pullProp != null) EnableCursor(0, pullProp, new Vector3(6, 2, 2));
+            if (mouseProp != null) EnableCursor(0, mouseProp, new Vector3(6, 2, 2));
 
             GameObject pullCursor = propCursors[0].gameObject;
             MeshRenderer pullRenderer = pullCursor.GetComponent<MeshRenderer>();
@@ -116,7 +117,7 @@ public class PropCursor : MonoBehaviour
         }
         if (pushProp != null)
         {
-            Debug.Log("we're showing the shark prop");
+            //Debug.Log("we're showing the shark prop");
             EnableCursor(1, pushProp, new Vector3(5, 5, 5));
         }
         if (spawnProp1 != null)
@@ -135,7 +136,6 @@ public class PropCursor : MonoBehaviour
         // }
         if (diverProp != null)
         {
-            Debug.Log("we're showing the diver cursor");
             EnableCursor(4, diverProp, new Vector3(1, 2, 1));
         }
         DisableAbsentCursors();
@@ -143,12 +143,13 @@ public class PropCursor : MonoBehaviour
 
     private void DisableAbsentCursors()
     {
-        List<ObjectInput> props = new List<ObjectInput> { pushProp, pullProp, spawnProp1, spawnProp2, diverProp };
+        List<ObjectInput> props = new List<ObjectInput> { pullProp, pushProp, spawnProp1, spawnProp2, diverProp };
         List<int> indices = new List<int>();
         indices.AddRange(Enumerable.Range(0, props.Count));
         indices = indices.Where(i => props[i] == null).ToList();
         foreach (int i in indices)
         {
+            //Debug.Log("we disable the cursor number " + i);
             GameObject cursor = propCursors[i].gameObject;
             MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
             if (renderer.enabled) renderer.enabled = false;
@@ -160,6 +161,7 @@ public class PropCursor : MonoBehaviour
     {
         GameObject cursor = propCursors[index].gameObject;
         MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
+        //Debug.Log("renderer of the cursor: " + renderer.enabled);
         if (!renderer.enabled) renderer.enabled = true;
         cursor.transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
         cursor.transform.localScale = scale;
