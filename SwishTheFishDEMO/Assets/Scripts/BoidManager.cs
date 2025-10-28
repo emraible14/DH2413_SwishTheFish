@@ -118,18 +118,24 @@ public class BoidManager : MonoBehaviour
         {
             yield return new WaitForSeconds(3.0f);
             Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp1.position));
-            m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
+            Vector3 spawnDir = new Vector3(90, Helpers.GetPropOrientationDeg(spawnProp1.orientation), 0);
+            Debug.Log(spawnDir);
+
+            m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
         }
         else if (spawnProp2 != null)
         {
             yield return new WaitForSeconds(3.0f);
             Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp2.position));
-            m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
+            Vector3 spawnDir = new Vector3(90, Helpers.GetPropOrientationDeg(spawnProp2.orientation), 0);
+            Debug.Log(spawnDir);
+
+            m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
         }
         else
         {
             // Default zero location
-            m_boids.Add(schools[0].SpawnFish(Vector3.zero, fishColor, fishId));
+            m_boids.Add(schools[0].SpawnFish(Vector3.zero, Vector3.zero, fishColor, fishId));
         }
     }
 

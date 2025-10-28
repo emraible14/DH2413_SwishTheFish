@@ -25,7 +25,12 @@ public class Boid : MonoBehaviour
 
     private void Start()
     {
-        Velocity = Random.insideUnitSphere * 2;
+        if (Velocity == null)
+        {
+            Debug.Log("no initial velocity");
+            Velocity = Random.insideUnitSphere * 2;
+        }
+
         wiggleOffset = Random.Range(0f, Mathf.PI * 2f);
     }
 

@@ -17,11 +17,12 @@ public class Fish : MonoBehaviour
     {
         Vector3 velocity = m_boid.Velocity;
         var normalizedVel = velocity.normalized;
+
         if (velocity.sqrMagnitude > 0.001f)
-    {
-      Quaternion target = Quaternion.LookRotation(velocity, Vector3.up);
-      transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * 6);
-    }
+        {
+            Quaternion target = Quaternion.LookRotation(velocity, Vector3.up);
+            transform.rotation = Quaternion.Lerp(transform.rotation, target, Time.deltaTime * 6);
+        }
 
         transform.position = m_boid.Position;
         transform.position += new Vector3(0, 0, transform.parent.position.z); //inherit z-position
