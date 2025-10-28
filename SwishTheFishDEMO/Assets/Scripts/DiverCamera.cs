@@ -8,31 +8,42 @@ using Object = System.Object;
 
 public class DiverCamera : MonoBehaviour
 {
+    [Header("Cameras Data")]
+    public Camera diverCamera;
+    public Camera sceneCamera;
     private Camera camera;
 
-    public Camera diverCamera;             // diver's camera
-    public Color fallbackColor = Color.blue;
-    private Color originalColor;
-
+    [Header("Movement Data")]
     public float moveSpeed = 7f;
-    public float rotationSpeed = 11f;
-    public float smoothing = 5f;        // The speed with which the camera will be following.
-    public Vector3 movement = new Vector3(0, 0, 0);
-    public float yRotation = 0;
+    public float rotationSpeed = 30f;
+    public float smoothing = 5f;
+    public float maxDistance = 20f;
+    private float yRotation = 0;
 
+    [Header("Input Data")]
     public KeyCode upKey = KeyCode.C;
     public KeyCode downKey = KeyCode.LeftShift;
-    public float horizontalInput;
-    public float verticalInput;
-    public bool goUp = false;
-    public bool goDown = false;
+    private float horizontalInput;
+    private float verticalInput;
+    private bool goUp = false;
+    private bool goDown = false;
 
-    public Vector3 originalPos;
-    public float maxDistance = 20f;
+    [Header("Two Cameras Data")]
+    private Vector3 phPos;
+    private Vector3 phRot;
+    private float phFOV;
+    private Vector3 diverPos;
+    private Vector3 diverRot;
+    private float diverFOV;
 
-    ObjectInput diverProp;
-    public bool presentDiver = false;
+    [Header("Transition Data")]
+    private bool transitioning;
+    public float transitionDuration;
+    private bool sceneToDiver;
 
+    [Header("Diver Data")]
+    private ObjectInput diverProp;
+    private bool presentDiver = false;
 
 
     // Start is called before the first frame update
@@ -41,31 +52,31 @@ public class DiverCamera : MonoBehaviour
         TableManager.Instance.OnTouch += OnTouchReceive;
 
         camera = Camera.main;
-        originalPos = transform.position;
-        originalColor = diverCamera.backgroundColor;
+        diverPos = transform.position;
+        diverCamera.enabled = true;
 
+        phPos = sceneCamera.transform.position;
+        phRot = sceneCamera.transform.eulerAngles;
+        phFOV = sceneCamera.fieldOfView;
+
+        diverFOV = diverCamera.fieldOfView;
+
+        diverCamera.transform.position = phPos;
+        diverCamera.transform.eulerAngles = phRot;
+        diverCamera.fieldOfView = phFOV;
+
+        presentDiver = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // to test, change how we detect diver, like any button at a static location
-        ShowImage();
+        StartTransition();
         DiverInput();
         MoveCamera();
 
         //PrintControllerInputs();
     }
-
-    void PrintControllerInputs()
-    {
-        for (int i = 1; i <= 4; i++)
-        {
-            float axis = Input.GetAxis("Axis " + i);
-            if (Mathf.Abs(axis) > 0.1f) Debug.Log("Axis " + i + ": " + axis);
-        }
-    }
-
     void LateUpdate()
     {
 
@@ -76,60 +87,109 @@ public class DiverCamera : MonoBehaviour
         AddDiver(diverProp);
     }
 
-    // we receive the information of the fish here
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
     {
         if (objectInputs.Count > 0)
         {
             diverProp = objectInputs.TryGetValue(TableManager.DiverId, out diverProp) ? diverProp : null;
         }
+        else
+        {
+            diverProp = null;
+        }
     }
 
-    // we show either the inner camera footage, either the other placeholder image
     public void ShowImage()
     {
         // we receive no signal, we show the placeholder image
         if (diverProp == null && !presentDiver)
         {
-            diverCamera.clearFlags = CameraClearFlags.SolidColor;
-            diverCamera.backgroundColor = fallbackColor;
-            diverCamera.cullingMask = 0;
-
+            if (diverCamera.enabled) diverCamera.enabled = false;
+            if (sceneCamera != null) sceneCamera.enabled = true;
         }
         // we're receiving a signal, we enable the camera and turn off the placeholder
         else
         {
-            diverCamera.clearFlags = CameraClearFlags.Skybox;
-            diverCamera.backgroundColor = originalColor;
-            diverCamera.cullingMask = ~0;
+            //Debug.Log("we have a signal");
+            if (sceneCamera.enabled) sceneCamera.enabled = false;
+            if (diverCamera != null) diverCamera.enabled = true;
         }
     }
 
-    // we check if we add the diver at every frame
+    public void StartTransition()
+    {
+        if (transitioning)
+        {
+            StartCoroutine(TransitionImage());
+        }
+    }
+
+    IEnumerator TransitionImage()
+    {
+        Vector3 startPos = sceneToDiver ? phPos : diverPos;
+        Vector3 startRot = sceneToDiver ? phRot : diverRot;
+        float startFOV = sceneToDiver ? phFOV : diverFOV;
+        Vector3 endPos = sceneToDiver ? diverPos : phPos;
+        Vector3 endRot = sceneToDiver ? diverRot : phRot;
+        float endFOV = sceneToDiver ? diverFOV : phFOV;
+
+        Debug.Log("Let's start the transition. Here are our variables:\n" +
+            startPos + " -> " + endPos + "\n" +
+            startRot + " -> " + endRot + "\n" +
+            startFOV + " -> " + endFOV);
+
+        float elapsed = 0f;
+        while (elapsed < transitionDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / transitionDuration);
+            diverCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
+            diverCamera.transform.eulerAngles = Vector3.Lerp(startRot, endRot, t);
+            diverCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, t);
+            yield return null;
+        }
+
+        transitioning = false;
+    }
+
     public void AddDiver(ObjectInput prop)
     {
-        if (prop != null && prop.tagValue == TableManager.DiverId)
+        //if (prop != null && prop.tagValue == TableManager.DiverId)
+        if (Input.GetKey(KeyCode.M))
         {
-            Vector3 diverPosition = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-            diverPosition.y = transform.position.y;
-            //if (presentDiver) diverPosition.y = transform.position.y;
-            //else diverPosition.y -= 2f;
+            //Debug.Log("we received the signal for the diver, we add it");
+            //Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+            Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
+            Vector3 propRot = new Vector3(0f, 0f, 0f);
+            //transform.eulerAngles
 
-            if ((diverPosition - originalPos).magnitude > 1e-2f)
+            if (presentDiver) propPos.y = diverPos.y;
+            else
             {
-                diverPosition.y = transform.position.y;
-                originalPos = diverPosition;
-                transform.position = Vector3.Lerp(transform.position, originalPos, smoothing * Time.deltaTime);
+                Debug.Log("we didn't have a diver, now we do");
+                propPos.y -= 2f;
+                transitioning = true;
+                sceneToDiver = true;
             }
+
+            diverPos = propPos;
+            diverRot = propRot;
             presentDiver = true;
+            //Debug.Log("the diver's original position is " + diverPos);
         }
         else
         {
+            if (presentDiver)
+            {
+                Debug.Log("first frame since we don't have a diver anymore");
+                transitioning = true;
+                sceneToDiver = false;
+            }
             presentDiver = false;
         }
     }
 
-    // directional input
     public void DiverInput()
     {
         horizontalInput = Input.GetAxisRaw("4th Axis");
@@ -140,15 +200,12 @@ public class DiverCamera : MonoBehaviour
 
         goUp = Input.GetKey(upKey) || triggerUp > 0.1f;
         goDown = Input.GetKey(downKey) || triggerDown > 0.1f;
-
-        // ONLY FOR TESTING
-        //presentDiver = Input.GetKey(KeyCode.M);
-        //if (presentDiver) diverProp = new ObjectInput();
     }
 
-    // we apply the input's movement to the camera
     public void MoveCamera()
     {
+        if (!presentDiver || transitioning) return;
+
         Vector3 movementXZ = transform.forward * verticalInput;
         movementXZ = movementXZ.normalized * moveSpeed;
 
@@ -166,14 +223,14 @@ public class DiverCamera : MonoBehaviour
         }
 
         Vector3 targetCamPos = transform.position + movementXZ + movementY;
-        Vector3 centerToTarget = targetCamPos - originalPos;
+        Vector3 centerToTarget = targetCamPos - diverPos;
         float distToTarget = centerToTarget.magnitude;
 
         if (distToTarget > maxDistance)
         {
-            Vector3 centerToCam = transform.position - originalPos;
+            Vector3 centerToCam = transform.position - diverPos;
             float distToEdge = maxDistance - centerToCam.magnitude;
-            targetCamPos = originalPos + centerToTarget.normalized * maxDistance;
+            targetCamPos = diverPos + centerToTarget.normalized * maxDistance;
         }
 
         float turnY = horizontalInput * rotationSpeed * Time.deltaTime;
@@ -186,5 +243,8 @@ public class DiverCamera : MonoBehaviour
         targetCamPos = new Vector3(xBounded, yBounded, zBounded);
 
         transform.position = Vector3.Lerp(transform.position, targetCamPos, smoothing * Time.deltaTime);
+
+        diverPos = transform.position;
+        diverRot = transform.eulerAngles;
     }
 }

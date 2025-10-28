@@ -1618,6 +1618,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!81 &1191114463
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191114462}
+  m_Enabled: 0
 --- !u!20 &1191114464
 Camera:
   m_ObjectHideFlags: 0
@@ -1688,21 +1696,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   diverCamera: {fileID: 1191114464}
-  fallbackColor: {r: 0, g: 0, b: 1, a: 1}
+  sceneCamera: {fileID: 963194227}
   moveSpeed: 7
   rotationSpeed: 2500
   smoothing: 5
-  movement: {x: 0, y: 0, z: 0}
-  yRotation: 0
+  maxDistance: 25
   upKey: 99
   downKey: 304
-  horizontalInput: 0
-  verticalInput: 0
-  goUp: 0
-  goDown: 0
-  originalPos: {x: 0, y: 0, z: 0}
-  maxDistance: 20
-  presentDiver: 0
+  transitionDuration: 1
 --- !u!1 &1295059255
 GameObject:
   m_ObjectHideFlags: 0
