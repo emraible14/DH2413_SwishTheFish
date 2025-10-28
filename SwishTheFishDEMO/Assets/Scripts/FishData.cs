@@ -5,7 +5,7 @@ using UnityEngine;
 public class FishData
 {
     public string id;
-    public int deviceId;
+    public string deviceId;
 
     public string headId;
     public string bodyId;

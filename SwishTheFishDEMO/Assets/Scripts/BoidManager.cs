@@ -100,39 +100,46 @@ public class BoidManager : MonoBehaviour
         Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
         Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
         string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
+        string deviceId = "0";
 
         if (data != null)
         {
             FishData fish = JsonUtility.FromJson<FishData>((string)data);
             fishId = fish.headId + fish.bodyId + fish.tailId;
             fishColor = GetColor(fish.color);
+            deviceId = fish.deviceId;
         }
 
-        StartCoroutine(FishSpawnAction(spawnProp1, fishColor, fishId));
-        StartCoroutine(FishSpawnAction(spawnProp2, fishColor, fishId));
+        StartCoroutine(FishSpawnAction(fishColor, fishId, deviceId));
     }
 
-    IEnumerator FishSpawnAction(ObjectInput prop, Color fishColor, string fishId)
+    IEnumerator FishSpawnAction(Color fishColor, string fishId, string deviceId)
     {
-        if (spawnProp1 != null)
+        if (deviceId != "0")
         {
-            yield return new WaitForSeconds(3.0f);
-            Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp1.position));
-            Vector3 spawnDir = new Vector3(90, Helpers.GetPropOrientationDeg(spawnProp1.orientation), 0);
-            Debug.Log(spawnDir);
+            Debug.Log(deviceId);
+            yield return new WaitForSeconds(1.0f);
+            if (deviceId == "5" && spawnProp1 != null)
+            {
+                Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp1.position));
+                float angle = Helpers.GetPropOrientationDeg(spawnProp1.orientation) * Mathf.Deg2Rad;
+                Vector3 spawnDir = new Vector3(-Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+                Debug.Log(spawnDir);
 
-            m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
-        }
-        else if (spawnProp2 != null)
-        {
-            yield return new WaitForSeconds(3.0f);
-            Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp2.position));
-            Vector3 spawnDir = new Vector3(90, Helpers.GetPropOrientationDeg(spawnProp2.orientation), 0);
-            Debug.Log(spawnDir);
+                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
+            } else if (deviceId == "6" && spawnProp2 != null)
+            {
+                Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp2.position));
+                float angle = Helpers.GetPropOrientationDeg(spawnProp2.orientation) * Mathf.Deg2Rad;
+                Vector3 spawnDir = new Vector3(-Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+                Debug.Log(spawnDir);
 
-            m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
-        }
-        else
+                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
+            } else
+            {
+                Debug.Log("Received unknown deviceId");
+            }
+        } else
         {
             // Default zero location
             m_boids.Add(schools[0].SpawnFish(Vector3.zero, Vector3.zero, fishColor, fishId));

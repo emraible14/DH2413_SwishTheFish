@@ -236,7 +236,7 @@ public class School : MonoBehaviour
         // set position and velocity
         boid.Position = spawnPoint;
         Vector3 initialDirection = spawnDir == Vector3.zero ? Vector3.forward : spawnDir;
-        boid.Velocity = initialDirection * MinSpeed;
+        boid.Velocity = initialDirection * MinSpeed * 2;
         boid.transform.rotation = Quaternion.LookRotation(initialDirection);
 
         // make smaller
