@@ -154,20 +154,25 @@ public class DiverCamera : MonoBehaviour
 
     public void AddDiver(ObjectInput prop)
     {
-        //if (prop != null && prop.tagValue == TableManager.DiverId)
-        if (Input.GetKey(KeyCode.M))
+        if (prop != null && prop.tagValue == TableManager.DiverId)
+        //if (Input.GetKey(KeyCode.M))
         {
             //Debug.Log("we received the signal for the diver, we add it");
-            //Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-            Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+            //Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
-            //transform.eulerAngles
 
-            if (presentDiver) propPos.y = diverPos.y;
+            if (presentDiver)
+            {
+                //Debug.Log("we already have a diver, we just move it");
+                propPos.y = diverPos.y;
+                transitioning = false;
+                diverCamera.transform.position = Vector3.Lerp(diverPos, propPos, Time.fixedDeltaTime * 10);
+            }
             else
             {
-                Debug.Log("we didn't have a diver, now we do");
+                //Debug.Log("we didn't have a diver, now we do");
                 propPos.y -= 2f;
                 transitioning = true;
                 sceneToDiver = true;
