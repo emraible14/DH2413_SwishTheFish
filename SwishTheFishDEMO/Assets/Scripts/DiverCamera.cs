@@ -70,6 +70,10 @@ public class DiverCamera : MonoBehaviour
 
         startedTransition = false;
         transitioning = false;
+
+        // no fog
+        RenderSettings.fog = false;
+
     }
 
     // Update is called once per frame
@@ -154,6 +158,11 @@ public class DiverCamera : MonoBehaviour
                 diverCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
                 diverCamera.transform.eulerAngles = Vector3.Lerp(startRot, endRot, t);
                 diverCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, t);
+
+                if (diverCamera.transform.position.y < 35) RenderSettings.fog = true;
+                if (diverCamera.transform.position.y > 35) RenderSettings.fog = false;
+
+
                 yield return null;
             }
 
@@ -165,11 +174,11 @@ public class DiverCamera : MonoBehaviour
     public void AddDiver(ObjectInput prop)
     {
         if (prop != null && prop.tagValue == TableManager.DiverId)
-        //if (Input.GetKey(KeyCode.M))
+        // if (Input.GetKey(KeyCode.M))
         {
             //Debug.Log("we received the signal for the diver, we add it");
             Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-            //Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            // Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
 
@@ -204,6 +213,7 @@ public class DiverCamera : MonoBehaviour
             if (presentDiver)
             {
                 //Debug.Log("first frame since we don't have a diver anymore");
+                RenderSettings.fog = false;
                 transitioning = true;
                 sceneToDiver = false;
             }

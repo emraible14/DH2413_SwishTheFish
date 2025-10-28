@@ -84,6 +84,23 @@ public class Boid : MonoBehaviour
         transform.position = Position;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Obstacle") && other != null && other != GetComponent<Collider>())
+        {
+            Vector3 away = transform.position - other.transform.position;
+            away.y = 0f; // keep on horizontal plane if desired
+            float distance = away.magnitude;
+
+            // Normalize and scale avoidance based on distance
+            if (distance > 0.001f)
+            {
+                Vector3 avoidanceForce = away.normalized * (1f / distance) * 2f;
+                Velocity += avoidanceForce * Time.deltaTime;
+            }
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Obstacle") && other != null && other != GetComponent<Collider>())
