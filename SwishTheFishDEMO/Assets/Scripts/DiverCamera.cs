@@ -99,23 +99,6 @@ public class DiverCamera : MonoBehaviour
         }
     }
 
-    public void ShowImage()
-    {
-        // we receive no signal, we show the placeholder image
-        if (diverProp == null && !presentDiver)
-        {
-            if (diverCamera.enabled) diverCamera.enabled = false;
-            if (sceneCamera != null) sceneCamera.enabled = true;
-        }
-        // we're receiving a signal, we enable the camera and turn off the placeholder
-        else
-        {
-            //Debug.Log("we have a signal");
-            if (sceneCamera.enabled) sceneCamera.enabled = false;
-            if (diverCamera != null) diverCamera.enabled = true;
-        }
-    }
-
     public void StartTransition()
     {
         if (transitioning)
@@ -162,7 +145,6 @@ public class DiverCamera : MonoBehaviour
             Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
-            //transform.eulerAngles
 
             if (presentDiver) propPos.y = diverPos.y;
             else
@@ -246,5 +228,22 @@ public class DiverCamera : MonoBehaviour
 
         diverPos = transform.position;
         diverRot = transform.eulerAngles;
+    }
+
+    public void ShowImage()
+    {
+        // we receive no signal, we show the placeholder image
+        if (diverProp == null && !presentDiver)
+        {
+            if (diverCamera.enabled) diverCamera.enabled = false;
+            if (sceneCamera != null) sceneCamera.enabled = true;
+        }
+        // we're receiving a signal, we enable the camera and turn off the placeholder
+        else
+        {
+            //Debug.Log("we have a signal");
+            if (sceneCamera.enabled) sceneCamera.enabled = false;
+            if (diverCamera != null) diverCamera.enabled = true;
+        }
     }
 }

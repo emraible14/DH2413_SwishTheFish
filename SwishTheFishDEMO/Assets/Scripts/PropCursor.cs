@@ -56,6 +56,14 @@ public class PropCursor : MonoBehaviour
             
             //Debug.Log(pullProp);
         }
+        else
+        {
+            pushProp = null;
+            pushProp = null;
+            spawnProp= null;
+            mouseProp = null;
+            diverProp = null;
+        }
     }
 
     // Start is called before the first frame update
