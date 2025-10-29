@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.17338718, g: 0.2167391, b: 0.2988078, a: 1}
+  m_IndirectSpecularColor: {r: 0.17338708, g: 0.21673885, b: 0.29880738, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1794,14 +1794,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diverCamera: {fileID: 1191114464}
   sceneCamera: {fileID: 963194227}
-  moveSpeed: 7
+  moveSpeed: 5
   rotationSpeed: 2500
   smoothing: 5
   maxDistance: 25
   upKey: 99
   downKey: 304
-  transitionDuration: 2.5
-  transitionDelay: 2
+  transitionDuration: 2
+  transitionDelay: 1.5
 --- !u!114 &1191114467
 MonoBehaviour:
   m_ObjectHideFlags: 0
