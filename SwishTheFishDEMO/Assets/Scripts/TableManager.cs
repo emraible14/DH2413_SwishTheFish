@@ -270,7 +270,6 @@ public class TableManager : MonoBehaviour
 
         } else if(Input.GetKey(KeyCode.Mouse0))
         {
-            
             var viewportMousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             if (!surfaceObjects.TryGetValue(MouseId, out var surfaceObject))
             {
@@ -284,7 +283,6 @@ public class TableManager : MonoBehaviour
             OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         } else if (Input.GetKey(KeyCode.Mouse1))
         {
-            
             var viewportMousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             if (!surfaceObjects.TryGetValue(MouseId, out var surfaceObject))
             {

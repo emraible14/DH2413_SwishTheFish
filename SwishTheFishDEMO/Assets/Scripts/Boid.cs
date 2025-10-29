@@ -21,6 +21,8 @@ public class Boid : MonoBehaviour
     public float WiggleFrequency = 4f;
     private float wiggleOffset;
 
+    private Vector3 obstaclePosition = Vector3.zero;
+
     public Transform TailBone;
 
     private void Start()
@@ -59,18 +61,21 @@ public class Boid : MonoBehaviour
             }
         }
 
+        // Obstacle avoidance
+        Acceleration += ObstacleAvoidanceForce();
+
         //Step simulation
         Velocity += deltaTime * Acceleration;
         Position += 0.5f * deltaTime * deltaTime * Acceleration + deltaTime * Velocity;
         
         // Body wiggle
-        //float wiggleAngle = Mathf.Sin(Time.time * WiggleFrequency + wiggleOffset) * WiggleAmplitude;
-        //if (Velocity.sqrMagnitude > 0.001f)
-        //{
-         //   Quaternion moveRotation = Quaternion.LookRotation(Velocity.normalized, Vector3.up);
-          //  Quaternion wiggleRotation = Quaternion.AngleAxis(wiggleAngle, Vector3.up);
-           // transform.rotation = moveRotation * wiggleRotation;
-        //}
+        float wiggleAngle = Mathf.Sin(Time.time * WiggleFrequency + wiggleOffset) * WiggleAmplitude;
+        if (Velocity.sqrMagnitude > 0.001f)
+        {
+           Quaternion moveRotation = Quaternion.LookRotation(Velocity.normalized, Vector3.up);
+           Quaternion wiggleRotation = Quaternion.AngleAxis(wiggleAngle, Vector3.up);
+           transform.rotation = moveRotation * wiggleRotation;
+        }
 
         // tail wiggle
         if (TailBone)
@@ -88,47 +93,53 @@ public class Boid : MonoBehaviour
     {
         if (other.CompareTag("Obstacle") && other != null && other != GetComponent<Collider>())
         {
-            Vector3 away = transform.position - other.transform.position;
-            away.y = 0f; // keep on horizontal plane if desired
-            float distance = away.magnitude;
-
-            // Normalize and scale avoidance based on distance
-            if (distance > 0.001f)
-            {
-                Vector3 avoidanceForce = away.normalized * (1f / distance) * 2f;
-                Velocity += avoidanceForce * Time.deltaTime;
-            }
+            // Debug.Log("TriggerEnter");
+            obstaclePosition = other.transform.position;
+            // Debug.Log(other.name);
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    Vector3 ObstacleAvoidanceForce()
     {
-        if (other.CompareTag("Obstacle") && other != null && other != GetComponent<Collider>())
-        {
-            Vector3 away = transform.position - other.transform.position;
-            away.y = 0f; // keep on horizontal plane if desired
-            float distance = away.magnitude;
+        if (obstaclePosition == Vector3.zero) return Vector3.zero;
 
-            // Normalize and scale avoidance based on distance
-            if (distance > 0.001f)
-            {
-                Vector3 avoidanceForce = away.normalized * (1f / distance) * 2f;
-                Velocity += avoidanceForce * Time.deltaTime;
-            }
-        }
+        var force = Vector3.zero;
+
+        var distanceXZ = new Vector2(obstaclePosition.x, obstaclePosition.z) - new Vector2(Position.x, Position.z);
+
+        var repelFactor = 5; // lower factor, don't need to rush away
+        var repelDistance = 30; // want to avoid first
+
+        if (distanceXZ.magnitude > repelDistance) return force;
+
+        var distance = obstaclePosition - Position;
+        var normDistance = distance.normalized;
+        
+        // done like this to prioritize horizontal movement over vertical
+        var repelForceX = Random.Range(1, 4) * normDistance.x * repelFactor;
+        var repelForceZ = Random.Range(1, 4) * normDistance.z * repelFactor;
+        
+        force -= new Vector3(repelForceX, normDistance.y, repelForceZ);
+        
+        return force;
+        
     }
 
     Vector3 PropPullForce(Vector3 propPosition)
     {
         var force = Vector3.zero;
         
+        // check distace based on X and Z, return if too far way
         var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
-        
-        if (distanceXZ.magnitude > School.PropPullDistance || distanceXZ.magnitude < 15) return force;
-        
+        if (distanceXZ.magnitude > School.PropPullDistance) return force;
+
+        // get distance        
         var distance = propPosition - Position;
         distance = new Vector3(distance.x, 0, distance.z);
-        force += distance * School.PropPullForce;
+
+        float t = Mathf.InverseLerp(10f, School.PropPullDistance, distanceXZ.magnitude); // interpolate distance
+        float pullStrength = Mathf.SmoothStep(0f, 1f, t); // smooth fade near target
+        force += distance * School.PropPullForce * pullStrength;
             
         if (Velocity.magnitude > 0.1 && distance.magnitude < 2)
         {

@@ -17,6 +17,7 @@ public class BoidManager : MonoBehaviour
     ObjectInput pullProp;
     ObjectInput spawnProp1;
     ObjectInput spawnProp2;
+    ObjectInput mouseProp;
 
     private Camera camera;
 
@@ -54,6 +55,7 @@ public class BoidManager : MonoBehaviour
 
             pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
             pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
+            mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
             spawnProp1 = objectInputs.TryGetValue(TableManager.SpawnPropId1, out spawnProp1) ? spawnProp1 : null;
             spawnProp2 = objectInputs.TryGetValue(TableManager.SpawnPropId2, out spawnProp2) ? spawnProp2 : null;
         }
@@ -72,6 +74,7 @@ public class BoidManager : MonoBehaviour
         {
             pullProp = null;
             pushProp = null;
+            mouseProp = null;
             spawnProp1 = null;
             spawnProp2 = null;
         }
@@ -162,7 +165,8 @@ public class BoidManager : MonoBehaviour
         var props = new List<ObjectInput>
         {
             pushProp,
-            pullProp    
+            pullProp,
+            mouseProp,    
         };
 
         foreach (Boid boid in m_boids)

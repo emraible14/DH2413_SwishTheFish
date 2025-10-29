@@ -88,7 +88,7 @@ public class PropCursor : MonoBehaviour
             mesh_i.enabled = false;
             mesh_i.material.color = colors[i];
             propCursors.Add(cursor_i);
-            Debug.Log(cursor_i);
+            // Debug.Log(cursor_i);
         }
         Debug.Log(propCursors);
     }
@@ -101,10 +101,10 @@ public class PropCursor : MonoBehaviour
             fishIsColliding = false;
         }
 
-        if ((pullProp != null || mouseProp != null))
+        if (pullProp != null || mouseProp != null)
         {
             if (pullProp != null) EnableCursor(0, pullProp, new Vector3(14, 10, 10));
-            if (mouseProp != null) EnableCursor(0, mouseProp, new Vector3(6, 2, 2));
+            if (mouseProp != null) EnableCursor(0, mouseProp, new Vector3(12, 10, 10));
 
             GameObject pullCursor = propCursors[0].gameObject;
             MeshRenderer pullRenderer = pullCursor.GetComponent<MeshRenderer>();
@@ -161,6 +161,7 @@ public class PropCursor : MonoBehaviour
 
     private void EnableCursor(int index, ObjectInput prop, Vector3 scale)
     {
+        Debug.Log("cursor enabled");
         GameObject cursor = propCursors[index].gameObject;
         MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
         //Debug.Log("renderer of the cursor: " + renderer.enabled);

@@ -52,6 +52,7 @@ public class DiverCamera : MonoBehaviour
     private PostProcessVolume diverCameraPPV;
     private ColorGrading colorGrading;
     private LensDistortion lensDistortion;
+    private DepthOfField depthOfField;
     private Color initialColor;
 
 
@@ -66,6 +67,7 @@ public class DiverCamera : MonoBehaviour
         diverCameraPPV = GetComponent<PostProcessVolume>();
         diverCameraPPV.profile.TryGetSettings(out colorGrading);
         diverCameraPPV.profile.TryGetSettings(out lensDistortion);
+        diverCameraPPV.profile.TryGetSettings(out depthOfField);
         if (colorGrading != null)
         {
             initialColor = colorGrading.colorFilter.value;
@@ -159,28 +161,16 @@ public class DiverCamera : MonoBehaviour
 
                 if (diverCamera.transform.position.y < 35)
                 {
-                    if (colorGrading != null)
-                    {
-                        colorGrading.colorFilter.value = new Color(0.59f, 1.81f, 2.11f, 1f);
-                    }
+                    if (colorGrading != null) colorGrading.colorFilter.value = new Color(0.59f, 1.81f, 2.11f, 1f);
+                    if (lensDistortion != null) lensDistortion.intensity.value = -59;
+                    if (depthOfField != null) depthOfField.aperture.value = 5;
 
-                    if (lensDistortion != null)
-                    {
-                        lensDistortion.intensity.value = -59;
-                    }
-                    
                 }
                 else
                 {
-                    if (colorGrading != null)
-                    {
-                        colorGrading.colorFilter.value = initialColor;
-                    }
-
-                    if (lensDistortion != null)
-                    {
-                        lensDistortion.intensity.value = 0;
-                    }
+                    if (colorGrading != null) colorGrading.colorFilter.value = initialColor;
+                    if (lensDistortion != null) lensDistortion.intensity.value = 0;
+                    if (depthOfField != null) depthOfField.aperture.value = 32;
                 }
 
 
@@ -196,11 +186,11 @@ public class DiverCamera : MonoBehaviour
 
     public void AddDiver(ObjectInput prop)
     {
-        if (prop != null && prop.tagValue == TableManager.DiverId)
-         //if (Input.GetKey(KeyCode.M))
+        // if (prop != null && prop.tagValue == TableManager.DiverId)
+        if (Input.GetKey(KeyCode.M))
         {
-            Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-             //Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            // Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+             Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
 
