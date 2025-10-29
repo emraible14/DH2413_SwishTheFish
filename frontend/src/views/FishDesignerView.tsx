@@ -17,7 +17,9 @@ function FishDesignerView(props: FishDesignerProps) {
   const [bodyCarouselApi, setBodyCarouselApi] = useState<CarouselApi>();
   const [headCarouselApi, setHeadCarouselApi] = useState<CarouselApi>();
   const colorOptions = ['#ffb400', '#0ad86b', '#6f39f6', '#f83dea', '#00cad9'];
-  const [color, setColor] = useState(colorOptions[0]);
+  const [tailColor, setTailColor] = useState(colorOptions[0]);
+  const [bodyColor, setBodyColor] = useState(colorOptions[0]);
+  const [headColor, setHeadColor] = useState(colorOptions[0]);
 
   const [tailIndex, setTailIndex] = useState(0);
   const [bodyIndex, setBodyIndex] = useState(0);
@@ -34,9 +36,16 @@ function FishDesignerView(props: FishDesignerProps) {
     if (props.config.tailId > 0) tailCarouselApi.scrollTo(props.config.tailId - 1);
 
     // Update color if needed
-    if (props.config.color && props.config.color !== "#000000") {
-      setColor(props.config.color);
+    if (props.config.tailColor && props.config.tailColor !== "#000000") {
+      setTailColor(props.config.tailColor);
     }
+    if (props.config.bodyColor && props.config.bodyColor !== "#000000") {
+      setBodyColor(props.config.tailColor);
+    }
+    if (props.config.headColor && props.config.headColor !== "#000000") {
+      setHeadColor(props.config.tailColor);
+    }
+
   }, [props.config, headCarouselApi, bodyCarouselApi, tailCarouselApi]);
 
   useEffect(() => {
@@ -93,7 +102,9 @@ function FishDesignerView(props: FishDesignerProps) {
       tailId: tailCarouselApi?.selectedScrollSnap() ? tailCarouselApi?.selectedScrollSnap() + 1 : 0 + 1,
       bodyId: bodyCarouselApi?.selectedScrollSnap() ? bodyCarouselApi?.selectedScrollSnap() + 1 : 0 + 1,
       headId: headCarouselApi?.selectedScrollSnap() ? headCarouselApi?.selectedScrollSnap() + 1 : 0 + 1,
-      color: color,
+      tailColor: tailColor,
+      bodyColor: bodyColor,
+      headColor: headColor,
       deviceId: null,
     }
     props.addFish(config);
@@ -103,10 +114,25 @@ function FishDesignerView(props: FishDesignerProps) {
     <>
       <div className='inset-0 flex flex-col items-center justify-center'>
         <h1 className='p-4'><b>Design your Fish:</b></h1>
-        <div className='flex flex-row justify-center gap-3'>
-          {colorOptions.map((buttonColor) => (
-            <Button key={buttonColor} style={{backgroundColor: buttonColor}} onClick={() => setColor(buttonColor)} size="icon" className="size-8"/>
-          ))}
+        <div className='flex flex-col gap-1'>
+          <div className='flex flex-row justify-center gap-3'>
+            <div className='flex justify-center w-15'>Tail:</div>
+            {colorOptions.map((buttonColor) => (
+              <Button key={buttonColor} style={{backgroundColor: buttonColor}} onClick={() => setTailColor(buttonColor)} size="icon" className="size-8"/>
+            ))}
+          </div>
+          <div className='flex flex-row justify-center gap-3'>
+            <div className='flex justify-center w-15'>Body:</div>
+            {colorOptions.map((buttonColor) => (
+              <Button key={buttonColor} style={{backgroundColor: buttonColor}} onClick={() => setBodyColor(buttonColor)} size="icon" className="size-8"/>
+            ))}
+          </div>
+          <div className='flex flex-row justify-center gap-3'>
+          <div className='flex justify-center w-15'>Head:</div>
+            {colorOptions.map((buttonColor) => (
+              <Button key={buttonColor} style={{backgroundColor: buttonColor}} onClick={() => setHeadColor(buttonColor)} size="icon" className="size-8"/>
+            ))}
+          </div>
         </div>
         <div className='flex flex-col justify-center items-center'>
           <Carousel className="w-60" setApi={setTailCarouselApi}>
@@ -117,7 +143,7 @@ function FishDesignerView(props: FishDesignerProps) {
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[5, 5, 5]} />
                     <OverheadCamera />
-                    <SubFishModel color={color} componentPart='tail' componentId={index+1}/>
+                    <SubFishModel color={tailColor} componentPart='tail' componentId={index+1}/>
                     {/* <Tail material_color={color} position={[0, 0, 2.2]}/> */}
                   </Canvas>}
                 </CarouselItem>
@@ -134,7 +160,7 @@ function FishDesignerView(props: FishDesignerProps) {
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[5, 5, 5]} />
                     <OverheadCamera />
-                    <SubFishModel color={color} componentPart='body' componentId={index+1}/>
+                    <SubFishModel color={bodyColor} componentPart='body' componentId={index+1}/>
                   </Canvas>}
                 </CarouselItem>
               ))}
@@ -149,7 +175,7 @@ function FishDesignerView(props: FishDesignerProps) {
                     {index === headIndex && <Canvas className="w-full h-full" camera={{ fov: 7.5, position: [0, 50, 0] }}>
                       <ambientLight intensity={0.5} />
                       <directionalLight position={[5, 5, 5]} />
-                      <SubFishModel color={color} componentPart='head' componentId={index+1}/>
+                      <SubFishModel color={headColor} componentPart='head' componentId={index+1}/>
                     </Canvas>}
                 </CarouselItem>
               ))}
@@ -158,7 +184,7 @@ function FishDesignerView(props: FishDesignerProps) {
             <CarouselNext />
           </Carousel>
         </div>
-        <div className='flex flex-row justify-between w-100 p-4'>
+        <div className='flex flex-row justify-between w-100 pr-4 pl-4'>
           <Button id="sendBtn" onClick={props.goBack} >Back</Button>
           <Button id="sendBtn" onClick={sendConfig} >Next</Button>
         </div>

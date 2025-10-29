@@ -143,17 +143,18 @@ public class School : MonoBehaviour
         for (int i = 0; i < m_numFish; ++i)
         {
             // random spawning
-            Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
-            Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
+            Color[] defaultColors = new Color[] { Color.red, Color.blue, Color.green };
+            Color randomColor = defaultColors[Random.Range(0, defaultColors.Length)];
+            Color[] fishColors = new Color[] { randomColor, randomColor, randomColor } ;
             string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
 
-            var boid = SpawnFish(Vector3.zero, Vector3.zero, fishColor, fishId);
+            var boid = SpawnFish(Vector3.zero, Vector3.zero, fishColors, fishId);
             yield return boid;
         }
     }
 
 
-    private Boid CreateFishObject(Vector3 spawnPoint, Color fishColor, string fishId)
+    private Boid CreateFishObject(Vector3 spawnPoint, Color[] fishColors, string fishId)
     {
         // Load correct resource based on fishId and add scripts
         var loadedResource = Resources.Load<GameObject>("fish" + fishId);
@@ -169,32 +170,40 @@ public class School : MonoBehaviour
         {
             foreach (Material mat in r.materials)
             {
-                if (mat.name.Substring(0, 3) != "Mat")
+                if (mat.name.Substring(0, 4) == "Head")
                 {
-                    mat.color = fishColor;
+                    mat.color = fishColors[0];
+                }
+                else if (mat.name.Substring(0, 4) == "Body")
+                {
+                    mat.color = fishColors[1];
+                }
+                else if (mat.name.Substring(0, 4) == "Tail")
+                {
+                    mat.color = fishColors[2];
                 }
             }
         }
 
-        SkinnedMeshRenderer rend = boid.GetComponentInChildren<SkinnedMeshRenderer>();
-        for (int i = 2; i < rend.materials.Length; i++)
-        {
-            Material mat = rend.materials[i];
-            mat.color = fishColor;
-        }
+        // SkinnedMeshRenderer rend = boid.GetComponentInChildren<SkinnedMeshRenderer>();
+        // for (int i = 2; i < rend.materials.Length; i++)
+        // {
+        //     Material mat = rend.materials[i];
+        //     mat.color = fishColor;
+        // }
         //rend.materials[1].color = Color.black;
 
         return boid;
     }
 
-    public Boid SpawnFish(Vector3 spawnPos, Vector3 spawnDir, Color fishColor, string fishId)
+    public Boid SpawnFish(Vector3 spawnPos, Vector3 spawnDir, Color[] fishColors, string fishId)
     {
         Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
         for (int j = 0; j < 3; ++j)
             spawnPoint[j] = Mathf.Clamp(spawnPoint[j], m_bounds.bounds.min[j], m_bounds.bounds.max[j]);
 
-        Boid boid = CreateFishObject(spawnPoint, fishColor, fishId);
+        Boid boid = CreateFishObject(spawnPoint, fishColors, fishId);
 
         // add rigidbody
         Rigidbody rb = boid.gameObject.GetComponent<Rigidbody>();
