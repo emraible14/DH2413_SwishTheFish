@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
@@ -7,13 +8,16 @@ using Object = System.Object;
 [RequireComponent(typeof(MeshRenderer))]
 public class PropCursor : MonoBehaviour
 {
+    public GameObject propCursorPrefab;
+    List<GameObject> propCursors;
 
     ObjectInput objectInput;
     private Camera camera;
     private MeshRenderer meshRenderer;
-    ObjectInput pushProp;
     ObjectInput pullProp;
-    ObjectInput spawnProp;
+    ObjectInput pushProp;
+    ObjectInput spawnProp1;
+    ObjectInput spawnProp2;
     ObjectInput mouseProp;
     ObjectInput diverProp;
 
@@ -50,20 +54,21 @@ public class PropCursor : MonoBehaviour
         {   
             pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
             pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
-            spawnProp = objectInputs.TryGetValue(TableManager.SpawnPropId, out spawnProp) ? spawnProp : null;
+            spawnProp1 = objectInputs.TryGetValue(TableManager.SpawnPropId1, out spawnProp1) ? spawnProp1 : null;
+            spawnProp2 = objectInputs.TryGetValue(TableManager.SpawnPropId2, out spawnProp2) ? spawnProp2 : null;
             mouseProp = objectInputs.TryGetValue(TableManager.MouseId, out mouseProp) ? mouseProp : null;
             diverProp = objectInputs.TryGetValue(TableManager.DiverId, out diverProp) ? diverProp : null;
-            
-            //Debug.Log(pullProp);
         }
         else
         {
             pushProp = null;
-            pushProp = null;
-            spawnProp= null;
+            pullProp = null;
+            spawnProp1 = null;
+            spawnProp2 = null;
             mouseProp = null;
             diverProp = null;
         }
+        //Debug.Log("the push prop is: " + pushProp);
     }
 
     // Start is called before the first frame update
@@ -73,7 +78,20 @@ public class PropCursor : MonoBehaviour
         objectInput = null;
         camera = Camera.main;
         _school = FindObjectOfType<School>();
-        meshRenderer = GetComponent<MeshRenderer>();
+        //meshRenderer = GetComponent<MeshRenderer>();
+
+        propCursors = new List<GameObject>();
+        List<Color> colors = new List<Color> { Color.black, Color.blue, Color.green, Color.green, Color.yellow };
+        for (int i = 0; i < colors.Count; i++)
+        {
+            GameObject cursor_i = Instantiate(propCursorPrefab, Vector3.zero, Quaternion.Euler(90, 90, 0));
+            MeshRenderer mesh_i = cursor_i.GetComponent<MeshRenderer>();
+            mesh_i.enabled = false;
+            mesh_i.material.color = colors[i];
+            propCursors.Add(cursor_i);
+            Debug.Log(cursor_i);
+        }
+        Debug.Log(propCursors);
     }
 
     // Update is called once per frame
@@ -83,32 +101,32 @@ public class PropCursor : MonoBehaviour
         {
             fishIsColliding = false;
         }
-        
+
         if ((pullProp != null || mouseProp != null))
         {
-            if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            if (!fishIsColliding) meshRenderer.material.color = Color.black;
-            transform.position = pullProp != null ? Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pullProp.position, 50)) : Helpers
-                .GetWorldPositionOnPlane(camera, mouseProp.position, 50);
+            if (pullProp != null) EnableCursor(0, pullProp, new Vector3(6, 2, 2));
+            if (mouseProp != null) EnableCursor(0, mouseProp, new Vector3(6, 2, 2));
+
+            GameObject pullCursor = propCursors[0].gameObject;
+            MeshRenderer pullRenderer = pullCursor.GetComponent<MeshRenderer>();
+            if (!fishIsColliding) pullRenderer.material.color = Color.black;
             if (pullProp != null)
             {
-                transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
+                pullCursor.transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
             }
-            transform.localScale = new Vector3(6, 2, 2);
         }
-        else if (pushProp != null)
+        if (pushProp != null)
         {
-            if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            meshRenderer.material.color = Color.blue;
-            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, pushProp.position));
-            transform.localScale = new Vector3(5, 5, 5);
+            //Debug.Log("we're showing the shark prop");
+            EnableCursor(1, pushProp, new Vector3(5, 5, 5));
         }
-        else if (spawnProp != null)
+        if (spawnProp1 != null)
         {
-            if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            meshRenderer.material.color = Color.green;
-            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
-            transform.localScale = new Vector3(5, 5, 5);
+            EnableCursor(2, spawnProp1, new Vector3(5, 5, 5));
+        }
+        if (spawnProp2 != null)
+        {
+            EnableCursor(3, spawnProp2, new Vector3(5, 5, 5));
         }
         // else if (mouseProp != null)
         // {
@@ -116,17 +134,37 @@ public class PropCursor : MonoBehaviour
         //     meshRenderer.material.color = Color.yellow;
         //     transform.position = Helpers.GetWorldPositionOnPlane(camera, mouseProp.position, 10);
         // }
-        else if (diverProp != null)
+        if (diverProp != null)
         {
-            if (!meshRenderer.enabled) meshRenderer.enabled = true;
-            meshRenderer.material.color = Color.yellow;
-            transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, diverProp.position));
-            transform.localScale = new Vector3(1, 2, 1);
+            EnableCursor(4, diverProp, new Vector3(1, 2, 1));
         }
-        else if (meshRenderer.enabled)
+        DisableAbsentCursors();
+    }
+
+    private void DisableAbsentCursors()
+    {
+        List<ObjectInput> props = new List<ObjectInput> { pullProp, pushProp, spawnProp1, spawnProp2, diverProp };
+        List<int> indices = new List<int>();
+        indices.AddRange(Enumerable.Range(0, props.Count));
+        indices = indices.Where(i => props[i] == null).ToList();
+        foreach (int i in indices)
         {
-            meshRenderer.enabled = false;
+            //Debug.Log("we disable the cursor number " + i);
+            GameObject cursor = propCursors[i].gameObject;
+            MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
+            if (renderer.enabled) renderer.enabled = false;
         }
+
+    }
+
+    private void EnableCursor(int index, ObjectInput prop, Vector3 scale)
+    {
+        GameObject cursor = propCursors[index].gameObject;
+        MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
+        //Debug.Log("renderer of the cursor: " + renderer.enabled);
+        if (!renderer.enabled) renderer.enabled = true;
+        cursor.transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+        cursor.transform.localScale = scale;
     }
 
     private void OnDrawGizmos()

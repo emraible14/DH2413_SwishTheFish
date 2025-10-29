@@ -147,7 +147,7 @@ public class School : MonoBehaviour
             Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
             string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
 
-            var boid = SpawnFish(Vector3.zero, fishColor, fishId);
+            var boid = SpawnFish(Vector3.zero, Vector3.zero, fishColor, fishId);
             yield return boid;
         }
     }
@@ -187,7 +187,7 @@ public class School : MonoBehaviour
         return boid;
     }
 
-    public Boid SpawnFish(Vector3 spawnPos, Color fishColor, string fishId)
+    public Boid SpawnFish(Vector3 spawnPos, Vector3 spawnDir, Color fishColor, string fishId)
     {
         Vector3 spawnPoint = spawnPos == Vector3.zero ? transform.position + m_spawnRadius * Random.insideUnitSphere : spawnPos;
 
@@ -235,9 +235,9 @@ public class School : MonoBehaviour
 
         // set position and velocity
         boid.Position = spawnPoint;
-        Vector3 initialDirection = Vector3.forward;
-        boid.Velocity = initialDirection * MinSpeed;
-        // boid.transform.rotation = Quaternion.LookRotation(initialDirection);
+        Vector3 initialDirection = spawnDir == Vector3.zero ? Vector3.forward : spawnDir;
+        boid.Velocity = spawnDir == Vector3.zero ? Random.insideUnitSphere * 2 : initialDirection * MinSpeed * 2;
+        boid.transform.rotation = Quaternion.LookRotation(initialDirection);
 
         // make smaller
         boid.transform.localScale *= 0.8f; 

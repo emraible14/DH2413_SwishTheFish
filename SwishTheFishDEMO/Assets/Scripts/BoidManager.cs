@@ -15,7 +15,8 @@ public class BoidManager : MonoBehaviour
 
     ObjectInput pushProp;
     ObjectInput pullProp;
-    ObjectInput spawnProp;
+    ObjectInput spawnProp1;
+    ObjectInput spawnProp2;
 
     private Camera camera;
 
@@ -47,29 +48,34 @@ public class BoidManager : MonoBehaviour
     }
 
     private void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
-     {
-         if (objectInputs.Count > 0)
-         {
+    {
+        if (objectInputs.Count > 0)
+        {
 
-                pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
-                pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
-                spawnProp = objectInputs.TryGetValue(TableManager.SpawnPropId, out spawnProp) ? spawnProp : null;
+            pushProp = objectInputs.TryGetValue(TableManager.PushPropId, out pushProp) ? pushProp : null;
+            pullProp = objectInputs.TryGetValue(TableManager.PullPropId, out pullProp) ? pullProp : null;
+            spawnProp1 = objectInputs.TryGetValue(TableManager.SpawnPropId1, out spawnProp1) ? spawnProp1 : null;
+            spawnProp2 = objectInputs.TryGetValue(TableManager.SpawnPropId2, out spawnProp2) ? spawnProp2 : null;
+        }
 
-         }
-         else if (surfaceFingers.Count > 0)
+        /*
+        else if (surfaceFingers.Count > 0)
         {
             foreach (KeyValuePair<int, FingerInput> entry in surfaceFingers)
             {
                 pullProp = new ObjectInput(10000, 2, entry.Value.position, 0, Vector2.zero, 0, 0, 0);
             }
         }
-         else
-         {
+        */
+
+        else
+        {
             pullProp = null;
             pushProp = null;
-            spawnProp = null;
-         }
-     }
+            spawnProp1 = null;
+            spawnProp2 = null;
+        }
+    }
 
     public int GetNumBoids()
     {
@@ -94,30 +100,49 @@ public class BoidManager : MonoBehaviour
         Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
         Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
         string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
+        string deviceId = "0";
 
         if (data != null)
         {
             FishData fish = JsonUtility.FromJson<FishData>((string)data);
             fishId = fish.headId + fish.bodyId + fish.tailId;
             fishColor = GetColor(fish.color);
+            deviceId = fish.deviceId;
         }
 
-        StartCoroutine(FishSpawnAction(spawnProp, fishColor, fishId));
+        StartCoroutine(FishSpawnAction(fishColor, fishId, deviceId));
     }
 
-    IEnumerator FishSpawnAction(ObjectInput prop, Color fishColor, string fishId)
+    IEnumerator FishSpawnAction(Color fishColor, string fishId, string deviceId)
     {
-        if (spawnProp != null)
+        if (deviceId != "0")
         {
-            yield return new WaitForSeconds(3.0f);
-            Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp.position));
-            m_boids.Add(schools[0].SpawnFish(spawnPos, fishColor, fishId));
+            Debug.Log(deviceId);
+            yield return new WaitForSeconds(1.0f);
+            if (deviceId == "5" && spawnProp1 != null)
+            {
+                Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp1.position));
+                float angle = Helpers.GetPropOrientationDeg(spawnProp1.orientation) * Mathf.Deg2Rad;
+                Vector3 spawnDir = new Vector3(-Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+                Debug.Log(spawnDir);
 
-        }
-        else
+                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
+            } else if (deviceId == "6" && spawnProp2 != null)
+            {
+                Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp2.position));
+                float angle = Helpers.GetPropOrientationDeg(spawnProp2.orientation) * Mathf.Deg2Rad;
+                Vector3 spawnDir = new Vector3(-Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+                Debug.Log(spawnDir);
+
+                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
+            } else
+            {
+                Debug.Log("Received unknown deviceId");
+            }
+        } else
         {
             // Default zero location
-            m_boids.Add(schools[0].SpawnFish(Vector3.zero, fishColor, fishId));
+            m_boids.Add(schools[0].SpawnFish(Vector3.zero, Vector3.zero, fishColor, fishId));
         }
     }
 
@@ -162,7 +187,7 @@ public class BoidManager : MonoBehaviour
     public void EliminateFishes()
     {
         int n_boids = GetNumBoids();
-        int max_boids = 10;
+        int max_boids = 50;
         if (n_boids > max_boids)
         {
             int diff = n_boids - max_boids;
@@ -195,8 +220,6 @@ public class BoidManager : MonoBehaviour
             bi.Velocity.y = 0f;
             bi.Velocity *= 1.02f;
             bi.Position += 0.5f * deltaTime * deltaTime * bi.Acceleration + deltaTime * bi.Velocity;
-            // make advance
-            // if out of bounds, kill
         }
 
         int offset = 0;
@@ -209,7 +232,6 @@ public class BoidManager : MonoBehaviour
                 to_remove.RemoveAt(i - offset);
                 offset++;
             }
-            // remove here
         }
     }
 }

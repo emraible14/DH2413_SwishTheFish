@@ -63,7 +63,7 @@ function SelectDeviceView(props: SelectDeviceViewProps) {
               </SelectTrigger>
               <SelectContent>
                   <SelectGroup>
-                  <SelectItem value="4">Blue</SelectItem>
+                  <SelectItem value="6">Blue</SelectItem>
                   <SelectItem value="5">Red</SelectItem>
                   </SelectGroup>
               </SelectContent>

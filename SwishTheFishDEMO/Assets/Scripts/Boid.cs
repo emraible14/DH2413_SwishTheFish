@@ -25,7 +25,12 @@ public class Boid : MonoBehaviour
 
     private void Start()
     {
-        Velocity = Random.insideUnitSphere * 2;
+        if (Velocity == null)
+        {
+            Debug.Log("no initial velocity");
+            Velocity = Random.insideUnitSphere * 2;
+        }
+
         wiggleOffset = Random.Range(0f, Mathf.PI * 2f);
     }
 
@@ -77,6 +82,23 @@ public class Boid : MonoBehaviour
         }
 
         transform.position = Position;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Obstacle") && other != null && other != GetComponent<Collider>())
+        {
+            Vector3 away = transform.position - other.transform.position;
+            away.y = 0f; // keep on horizontal plane if desired
+            float distance = away.magnitude;
+
+            // Normalize and scale avoidance based on distance
+            if (distance > 0.001f)
+            {
+                Vector3 avoidanceForce = away.normalized * (1f / distance) * 2f;
+                Velocity += avoidanceForce * Time.deltaTime;
+            }
+        }
     }
 
     private void OnTriggerStay(Collider other)

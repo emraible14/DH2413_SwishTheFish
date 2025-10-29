@@ -38,7 +38,9 @@ public class DiverCamera : MonoBehaviour
 
     [Header("Transition Data")]
     private bool transitioning;
+    private bool startedTransition;
     public float transitionDuration;
+    public float transitionDelay;
     private bool sceneToDiver;
 
     [Header("Diver Data")]
@@ -58,7 +60,6 @@ public class DiverCamera : MonoBehaviour
         phPos = sceneCamera.transform.position;
         phRot = sceneCamera.transform.eulerAngles;
         phFOV = sceneCamera.fieldOfView;
-
         diverFOV = diverCamera.fieldOfView;
 
         diverCamera.transform.position = phPos;
@@ -66,17 +67,22 @@ public class DiverCamera : MonoBehaviour
         diverCamera.fieldOfView = phFOV;
 
         presentDiver = false;
+
+        startedTransition = false;
+        transitioning = false;
+
+        // no fog
+        RenderSettings.fog = false;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        StartTransition();
         DiverInput();
         MoveCamera();
-
-        //PrintControllerInputs();
     }
+
     void LateUpdate()
     {
 
@@ -85,6 +91,7 @@ public class DiverCamera : MonoBehaviour
     void FixedUpdate()
     {
         AddDiver(diverProp);
+        StartTransition();
     }
 
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
@@ -109,62 +116,87 @@ public class DiverCamera : MonoBehaviour
 
     IEnumerator TransitionImage()
     {
-        Vector3 startPos = sceneToDiver ? phPos : diverPos;
-        Vector3 startRot = sceneToDiver ? phRot : diverRot;
-        float startFOV = sceneToDiver ? phFOV : diverFOV;
-        Vector3 endPos = sceneToDiver ? diverPos : phPos;
-        Vector3 endRot = sceneToDiver ? diverRot : phRot;
-        float endFOV = sceneToDiver ? diverFOV : phFOV;
+        yield return new WaitForSeconds(transitionDelay);
 
-        Debug.Log("Let's start the transition. Here are our variables:\n" +
-            startPos + " -> " + endPos + "\n" +
-            startRot + " -> " + endRot + "\n" +
-            startFOV + " -> " + endFOV);
-
-        float elapsed = 0f;
-        while (elapsed < transitionDuration)
+        if (transitioning && !startedTransition)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / transitionDuration);
-            diverCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
-            diverCamera.transform.eulerAngles = Vector3.Lerp(startRot, endRot, t);
-            diverCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, t);
-            yield return null;
-        }
+            startedTransition = true;
+            Vector3 startPos = sceneToDiver ? phPos : diverPos;
+            Vector3 startRot = sceneToDiver ? phRot : diverRot;
+            float startFOV = sceneToDiver ? phFOV : diverFOV;
+            Vector3 endPos = sceneToDiver ? diverPos : phPos;
+            Vector3 endRot = sceneToDiver ? diverRot : phRot;
+            float endFOV = sceneToDiver ? diverFOV : phFOV;
 
-        transitioning = false;
+            //Debug.Log("Let's start the transition. Here are our variables:\n" +
+            //    startPos + " -> " + endPos + "\n" +
+            //    startRot + " -> " + endRot + "\n" +
+            //    startFOV + " -> " + endFOV);
+
+            float elapsed = 0f;
+            while (elapsed < transitionDuration)
+            {
+                elapsed += Time.fixedDeltaTime;
+                float t = Mathf.SmoothStep(0f, 1f, elapsed / transitionDuration);
+                diverCamera.transform.position = Vector3.Lerp(startPos, endPos, t);
+                diverCamera.transform.eulerAngles = Vector3.Lerp(startRot, endRot, t);
+                diverCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, t);
+
+                if (diverCamera.transform.position.y < 35) RenderSettings.fog = true;
+                if (diverCamera.transform.position.y > 35) RenderSettings.fog = false;
+
+
+                yield return null;
+            }
+
+            transitioning = false;
+            startedTransition = false;
+        }
     }
 
     public void AddDiver(ObjectInput prop)
     {
-        //if (prop != null && prop.tagValue == TableManager.DiverId)
-        if (Input.GetKey(KeyCode.M))
+        if (prop != null && prop.tagValue == TableManager.DiverId)
+        // if (Input.GetKey(KeyCode.M))
         {
             //Debug.Log("we received the signal for the diver, we add it");
-            //Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-            Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+            // Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
 
-            if (presentDiver) propPos.y = diverPos.y;
+
+            if (presentDiver)
+            {
+                //Debug.Log("we already have a diver, we just move it");
+                if (transitioning) return;
+                propPos.y = diverCamera.transform.position.y;
+                if (!startedTransition && !transitioning)
+                {
+                    //Debug.Log("we didn't start a transition and don't have to either");
+                    diverCamera.transform.position = Vector3.Lerp(diverCamera.transform.position, propPos, Time.fixedDeltaTime * 10);
+                }
+                //transitioning = false;
+            }
             else
             {
-                Debug.Log("we didn't have a diver, now we do");
+                //Debug.Log("we didn't have a diver, now we do");
                 propPos.y -= 2f;
                 transitioning = true;
                 sceneToDiver = true;
+                presentDiver = true;
             }
 
             diverPos = propPos;
             diverRot = propRot;
-            presentDiver = true;
             //Debug.Log("the diver's original position is " + diverPos);
         }
         else
         {
             if (presentDiver)
             {
-                Debug.Log("first frame since we don't have a diver anymore");
+                //Debug.Log("first frame since we don't have a diver anymore");
+                RenderSettings.fog = false;
                 transitioning = true;
                 sceneToDiver = false;
             }

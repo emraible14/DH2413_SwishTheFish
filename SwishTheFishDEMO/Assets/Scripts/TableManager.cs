@@ -14,10 +14,11 @@ public class TableManager : MonoBehaviour
 {
     public static TableManager Instance { get; private set; }
 
-    public static int SpawnPropId = 4 | 5;
-    public const int DiverId = 3;
+    public static int SpawnPropId1 = 5;
+    public static int SpawnPropId2 = 6;
+    public const int DiverId = 1;
     public const int PullPropId = 2;
-    public const int PushPropId = 1;
+    public const int PushPropId = 3;
     public const int MouseId = 100;
 
     private void Awake()
@@ -299,8 +300,8 @@ public class TableManager : MonoBehaviour
         }
         else if (surfaceObjects.ContainsKey(PushPropId))
         {
-            surfaceObjects.Remove(PushPropId);
-            OnTouch?.Invoke(surfaceFingers, surfaceObjects);
+            //surfaceObjects.Remove(PushPropId);
+            //OnTouch?.Invoke(surfaceFingers, surfaceObjects);
         }
         else if (surfaceObjects.ContainsKey(MouseId))
         {
