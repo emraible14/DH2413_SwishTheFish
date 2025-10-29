@@ -20,6 +20,8 @@
             #pragma fragment frag
             #pragma multi_compile_fwdbase // Shadow addition
             #pragma multi_complile_shadowcaster // Shadow addition
+			// make fog work
+            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -44,6 +46,7 @@
                 float3 bitangent : TEXCOORD4;
                 float3 normal : TEXCOORD2;
                 float3 worldPos : TEXCOORD5;
+				//UNITY_FOG_COORDS(6)
             };
 
             sampler2D _SandAlbedo;
@@ -59,6 +62,7 @@
 
                 //offset the vertex value
                 o.uv = TRANSFORM_TEX( v.uv, _SandAlbedo );
+
                 float height = tex2Dlod( _SandHeight, float4(o.uv, 0, 0)).x * 2 - 1; // remap from (0-1) to (-1 - 1)
 
                 v.vertex.xyz += v.normal * (height * _DisplacementIntensity);
@@ -78,13 +82,15 @@
 
                 TRANSFER_SHADOW(o); // Shadow addition
                 //TRANSFER_VERTEX_TO_FRAGMENT(o);
-                
+				//o.fogCoord = UNITY_TRANSFER_FOG(o,o.pos);
+
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 sand = tex2D( _SandAlbedo, i.uv );
+
 
                 float3 tangentSpaceNormal = UnpackNormal(tex2D( _SandNormals, i.uv)); // not in world space right now, only tangent space
 
@@ -118,6 +124,7 @@
                 //float3 diffuse = saturate(dot(N, L)) * _LightColor0.xyz * shadow; // same as max(0, dot(N, L)), clamped values.
 
                 float3 finalClor = diffuse * _Color.rgb;
+			    //UNITY_APPLY_FOG(i.fogCoord, finalClor);
 
 
                 return float4(finalClor, 1);

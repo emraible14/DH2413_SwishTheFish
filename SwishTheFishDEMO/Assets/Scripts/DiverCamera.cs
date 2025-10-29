@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using static Microsoft.Surface.NativeWrappers.NativeMethods;
 using static UnityEngine.GraphicsBuffer;
 using Object = System.Object;
@@ -47,6 +48,11 @@ public class DiverCamera : MonoBehaviour
     private ObjectInput diverProp;
     private bool presentDiver = false;
 
+    private PostProcessVolume diverCameraPPV;
+    private ColorGrading colorGrading;
+    private LensDistortion lensDistortion;
+    private Color initialColor;
+
 
     // Start is called before the first frame update
     void Start()
@@ -56,6 +62,13 @@ public class DiverCamera : MonoBehaviour
         camera = Camera.main;
         diverPos = transform.position;
         diverCamera.enabled = true;
+        diverCameraPPV = GetComponent<PostProcessVolume>();
+        diverCameraPPV.profile.TryGetSettings(out colorGrading);
+        diverCameraPPV.profile.TryGetSettings(out lensDistortion);
+        if (colorGrading != null)
+        {
+            initialColor = colorGrading.colorFilter.value;
+        }
 
         phPos = sceneCamera.transform.position;
         phRot = sceneCamera.transform.eulerAngles;
@@ -70,9 +83,6 @@ public class DiverCamera : MonoBehaviour
 
         startedTransition = false;
         transitioning = false;
-
-        // no fog
-        RenderSettings.fog = false;
 
     }
 
@@ -159,8 +169,31 @@ public class DiverCamera : MonoBehaviour
                 diverCamera.transform.eulerAngles = Vector3.Lerp(startRot, endRot, t);
                 diverCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, t);
 
-                if (diverCamera.transform.position.y < 35) RenderSettings.fog = true;
-                if (diverCamera.transform.position.y > 35) RenderSettings.fog = false;
+                if (diverCamera.transform.position.y < 35)
+                {
+                    if (colorGrading != null)
+                    {
+                        colorGrading.colorFilter.value = new Color(0.59f, 1.81f, 2.11f, 1f);
+                    }
+
+                    if (lensDistortion != null)
+                    {
+                        lensDistortion.intensity.value = -59;
+                    }
+                    
+                }
+                else
+                {
+                    if (colorGrading != null)
+                    {
+                        colorGrading.colorFilter.value = initialColor;
+                    }
+
+                    if (lensDistortion != null)
+                    {
+                        lensDistortion.intensity.value = 0;
+                    }
+                }
 
 
                 yield return null;
@@ -213,7 +246,6 @@ public class DiverCamera : MonoBehaviour
             if (presentDiver)
             {
                 //Debug.Log("first frame since we don't have a diver anymore");
-                RenderSettings.fog = false;
                 transitioning = true;
                 sceneToDiver = false;
             }

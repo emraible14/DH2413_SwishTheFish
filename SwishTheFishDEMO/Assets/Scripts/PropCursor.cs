@@ -45,7 +45,7 @@ public class PropCursor : MonoBehaviour
         
         fishIsColliding = true;
         lastFishCollisionTime = Time.time;
-        if (meshRenderer.material.color != Color.green) meshRenderer.material.color = Color.green;
+        //if (meshRenderer.material.color != Color.green) meshRenderer.material.color = Color.green;
     }
 
     void OnTouchReceive(Dictionary<int, FingerInput> surfaceFingers, Dictionary<int, ObjectInput> objectInputs)
@@ -68,7 +68,6 @@ public class PropCursor : MonoBehaviour
             mouseProp = null;
             diverProp = null;
         }
-        //Debug.Log("the push prop is: " + pushProp);
     }
 
     // Start is called before the first frame update
@@ -104,12 +103,15 @@ public class PropCursor : MonoBehaviour
 
         if ((pullProp != null || mouseProp != null))
         {
-            if (pullProp != null) EnableCursor(0, pullProp, new Vector3(6, 2, 2));
+            if (pullProp != null) EnableCursor(0, pullProp, new Vector3(14, 10, 10));
             if (mouseProp != null) EnableCursor(0, mouseProp, new Vector3(6, 2, 2));
 
             GameObject pullCursor = propCursors[0].gameObject;
             MeshRenderer pullRenderer = pullCursor.GetComponent<MeshRenderer>();
+
             if (!fishIsColliding) pullRenderer.material.color = Color.black;
+            else pullRenderer.material.color = Color.red;
+
             if (pullProp != null)
             {
                 pullCursor.transform.eulerAngles = new Vector3(90, Helpers.GetPropOrientationDeg(pullProp.orientation), 0);
@@ -163,7 +165,9 @@ public class PropCursor : MonoBehaviour
         MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
         //Debug.Log("renderer of the cursor: " + renderer.enabled);
         if (!renderer.enabled) renderer.enabled = true;
-        cursor.transform.position = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+        var worldPropPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+
+        cursor.transform.position = worldPropPos;
         cursor.transform.localScale = scale;
     }
 
