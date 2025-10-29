@@ -100,8 +100,9 @@ public class BoidManager : MonoBehaviour
     {
 
         // Default random color and fish
-        Color[] colors = new Color[] { Color.red, Color.blue, Color.green };
-        Color fishColor = colors[Random.Range(0, colors.Length)];  // pick random color
+        Color[] defaultColors = new Color[] { Color.red, Color.blue, Color.green };
+        Color randomColor = defaultColors[Random.Range(0, defaultColors.Length)];
+        Color[] fishColors = new Color[] { randomColor, randomColor, randomColor } ;
         string fishId = Random.Range(1, 5).ToString() + Random.Range(1, 7).ToString() + Random.Range(1, 5).ToString();
         string deviceId = "0";
 
@@ -109,14 +110,14 @@ public class BoidManager : MonoBehaviour
         {
             FishData fish = JsonUtility.FromJson<FishData>((string)data);
             fishId = fish.headId + fish.bodyId + fish.tailId;
-            fishColor = GetColor(fish.color);
+            fishColors = new Color[] { GetColor(fish.headColor), GetColor(fish.bodyColor), GetColor(fish.tailColor)};
             deviceId = fish.deviceId;
         }
 
-        StartCoroutine(FishSpawnAction(fishColor, fishId, deviceId));
+        StartCoroutine(FishSpawnAction(fishColors, fishId, deviceId));
     }
 
-    IEnumerator FishSpawnAction(Color fishColor, string fishId, string deviceId)
+    IEnumerator FishSpawnAction(Color[] fishColors, string fishId, string deviceId)
     {
         if (deviceId != "0")
         {
@@ -129,23 +130,26 @@ public class BoidManager : MonoBehaviour
                 Vector3 spawnDir = new Vector3(-Mathf.Cos(angle), 0f, Mathf.Sin(angle));
                 Debug.Log(spawnDir);
 
-                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
-            } else if (deviceId == "6" && spawnProp2 != null)
+                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColors, fishId));
+            }
+            else if (deviceId == "6" && spawnProp2 != null)
             {
                 Vector3 spawnPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, spawnProp2.position));
                 float angle = Helpers.GetPropOrientationDeg(spawnProp2.orientation) * Mathf.Deg2Rad;
                 Vector3 spawnDir = new Vector3(-Mathf.Cos(angle), 0f, Mathf.Sin(angle));
                 Debug.Log(spawnDir);
 
-                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColor, fishId));
-            } else
+                m_boids.Add(schools[0].SpawnFish(spawnPos, spawnDir, fishColors, fishId));
+            }
+            else
             {
-                Debug.Log("Received unknown deviceId");
+                Debug.Log("Received unknown deviceId or missing prop, spawning at random pos");
+                m_boids.Add(schools[0].SpawnFish(Vector3.zero, Vector3.zero, fishColors, fishId));
             }
         } else
         {
             // Default zero location
-            m_boids.Add(schools[0].SpawnFish(Vector3.zero, Vector3.zero, fishColor, fishId));
+            m_boids.Add(schools[0].SpawnFish(Vector3.zero, Vector3.zero, fishColors, fishId));
         }
     }
 

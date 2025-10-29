@@ -3,6 +3,8 @@ export interface FishConfig {
     tailId: number,
     bodyId: number,
     headId: number,
-    color: string;
+    headColor: string;
+    bodyColor: string;
+    tailColor: string;
     deviceId: string | null;
 }

@@ -21,8 +21,14 @@ export function CompleteFishModel(props: FishModelProps) {
 
   useEffect(() => {
     Object.keys(materials).forEach((matName : string) => {
-      if (matName.slice(0, 3) !== "Mat") { // hacky way to avoid coloring eyes
-        (materials[matName] as any).color.set(props.config.color);
+      if (matName.slice(0, 4) === "Head") { // hacky way to avoid coloring eyes
+        (materials[matName] as any).color.set(props.config.headColor);
+      }
+      if (matName.slice(0, 4) === "Body") { // hacky way to avoid coloring eyes
+        (materials[matName] as any).color.set(props.config.bodyColor);
+      }
+      if (matName.slice(0, 4) === "Tail") { // hacky way to avoid coloring eyes
+        (materials[matName] as any).color.set(props.config.tailColor);
       }
     });
   }, [materials, props])

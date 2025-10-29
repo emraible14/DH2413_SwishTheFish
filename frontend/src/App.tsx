@@ -14,7 +14,9 @@ function App() {
     tailId: 1,
     bodyId: 1,
     headId: 1,
-    color: '#000000',
+    headColor: '#000000',
+    bodyColor: '#000000',
+    tailColor: '#000000',
     deviceId: null,
   };
   const [config, setConfig] = useState<FishConfig>(defaultFish);

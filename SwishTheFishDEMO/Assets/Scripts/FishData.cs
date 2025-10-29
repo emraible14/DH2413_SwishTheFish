@@ -11,5 +11,7 @@ public class FishData
     public string bodyId;
     public string tailId;
 
-    public string color;
+    public string headColor;
+    public string bodyColor;
+    public string tailColor;
 }
