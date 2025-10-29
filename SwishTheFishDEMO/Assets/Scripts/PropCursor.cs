@@ -120,15 +120,15 @@ public class PropCursor : MonoBehaviour
         if (pushProp != null)
         {
             //Debug.Log("we're showing the shark prop");
-            EnableCursor(1, pushProp, new Vector3(5, 5, 5));
+            //EnableCursor(1, pushProp, new Vector3(5, 5, 5));
         }
         if (spawnProp1 != null)
         {
-            EnableCursor(2, spawnProp1, new Vector3(5, 5, 5));
+            //EnableCursor(2, spawnProp1, new Vector3(5, 5, 5));
         }
         if (spawnProp2 != null)
         {
-            EnableCursor(3, spawnProp2, new Vector3(5, 5, 5));
+           // EnableCursor(3, spawnProp2, new Vector3(5, 5, 5));
         }
         // else if (mouseProp != null)
         // {
@@ -138,7 +138,7 @@ public class PropCursor : MonoBehaviour
         // }
         if (diverProp != null)
         {
-            EnableCursor(4, diverProp, new Vector3(1, 2, 1));
+            //EnableCursor(4, diverProp, new Vector3(1, 2, 1));
         }
         DisableAbsentCursors();
     }

@@ -196,11 +196,11 @@ public class DiverCamera : MonoBehaviour
 
     public void AddDiver(ObjectInput prop)
     {
-        //if (prop != null && prop.tagValue == TableManager.DiverId)
-         if (Input.GetKey(KeyCode.M))
+        if (prop != null && prop.tagValue == TableManager.DiverId)
+         //if (Input.GetKey(KeyCode.M))
         {
-            //Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-             Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
+             //Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
 

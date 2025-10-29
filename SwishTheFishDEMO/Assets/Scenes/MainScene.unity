@@ -1257,7 +1257,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 2103
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1421,11 +1421,11 @@ MonoBehaviour:
   m_spawnRadius: 10
   m_bounds: {fileID: 1006458014}
   m_boundsForceFactor: 5
-  propPullDistance: 15
-  propPullForce: 5
+  propPullDistance: 25
+  propPullForce: 3
   propRepelDistance: 15
   propRepelForce: 20
-  propVibrationMinDistance: 2
+  propVibrationMinDistance: 20
   m_cohesionForceFactor: 1
   m_cohesionRadius: 9
   m_separationForceFactor: 1
@@ -1772,7 +1772,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1847
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 1
@@ -2361,8 +2361,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448383482}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 31, z: 0}
-  m_LocalScale: {x: 25.08999, y: 25.08999, z: 25.08999}
+  m_LocalPosition: {x: 0, y: -29.5, z: 0}
+  m_LocalScale: {x: 44, y: 44, z: 44}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10

@@ -64,13 +64,13 @@ public class Boid : MonoBehaviour
         Position += 0.5f * deltaTime * deltaTime * Acceleration + deltaTime * Velocity;
         
         // Body wiggle
-        float wiggleAngle = Mathf.Sin(Time.time * WiggleFrequency + wiggleOffset) * WiggleAmplitude;
-        if (Velocity.sqrMagnitude > 0.001f)
-        {
-            Quaternion moveRotation = Quaternion.LookRotation(Velocity.normalized, Vector3.up);
-            Quaternion wiggleRotation = Quaternion.AngleAxis(wiggleAngle, Vector3.up);
-            transform.rotation = moveRotation * wiggleRotation;
-        }
+        //float wiggleAngle = Mathf.Sin(Time.time * WiggleFrequency + wiggleOffset) * WiggleAmplitude;
+        //if (Velocity.sqrMagnitude > 0.001f)
+        //{
+         //   Quaternion moveRotation = Quaternion.LookRotation(Velocity.normalized, Vector3.up);
+          //  Quaternion wiggleRotation = Quaternion.AngleAxis(wiggleAngle, Vector3.up);
+           // transform.rotation = moveRotation * wiggleRotation;
+        //}
 
         // tail wiggle
         if (TailBone)
@@ -124,7 +124,7 @@ public class Boid : MonoBehaviour
         
         var distanceXZ = new Vector2(propPosition.x, propPosition.z) - new Vector2(Position.x, Position.z);
         
-        if (distanceXZ.magnitude > School.PropPullDistance) return force;
+        if (distanceXZ.magnitude > School.PropPullDistance || distanceXZ.magnitude < 15) return force;
         
         var distance = propPosition - Position;
         distance = new Vector3(distance.x, 0, distance.z);
@@ -138,7 +138,7 @@ public class Boid : MonoBehaviour
         if (distanceXZ.magnitude < School.PropVibrationMinDistance)
         {
             EventManager.Dispatch(new CustomEvent(EventManager.EventType.FishCollision, null));
-        };
+        }
         
         return force;
     }
