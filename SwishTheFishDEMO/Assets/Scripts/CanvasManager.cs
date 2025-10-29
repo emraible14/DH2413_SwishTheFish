@@ -12,6 +12,7 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI socketStatus;
     [SerializeField] private Button connectButton;
     [SerializeField] private TMP_InputField ipInputField;
+    [SerializeField] private Button quitButton;
 
     private string ipAddressInput = "dh2413-swishthefish.onrender.com";
     private Canvas canvasComponent;
@@ -25,6 +26,8 @@ public class CanvasManager : MonoBehaviour
         ipInputField.onEndEdit.AddListener(IPAddressEditEnd);
 
         fishAmountText.text = FindObjectOfType<School>().GetNumFish() + " fish";
+        
+        quitButton.onClick.AddListener(QuitButtonClicked);
     }
 
 
@@ -35,6 +38,7 @@ public class CanvasManager : MonoBehaviour
         EventManager.OnSocketClosed -= UpdateSocketTextClosed;
         connectButton.onClick.RemoveListener(ConnectSocket);
         ipInputField.onEndEdit.RemoveListener(IPAddressEditEnd);
+        quitButton.onClick.RemoveListener(QuitButtonClicked);
     }
 
     private void Start()
@@ -50,6 +54,11 @@ public class CanvasManager : MonoBehaviour
             : new CustomEvent(EventManager.EventType.ConnectSocket, ipAddressInput);
         
         EventManager.Dispatch(eEvent);
+    }
+
+    private void QuitButtonClicked()
+    {
+        Application.Quit();
     }
 
     void UpdateSocketText(object data)
