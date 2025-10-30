@@ -161,7 +161,6 @@ public class PropCursor : MonoBehaviour
 
     private void EnableCursor(int index, ObjectInput prop, Vector3 scale)
     {
-        Debug.Log("cursor enabled");
         GameObject cursor = propCursors[index].gameObject;
         MeshRenderer renderer = cursor.GetComponent<MeshRenderer>();
         //Debug.Log("renderer of the cursor: " + renderer.enabled);
