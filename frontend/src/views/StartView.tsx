@@ -10,7 +10,7 @@ function StartView(props: StartViewProps) {
 
   return (
     <>
-      <div className='absolute inset-0 flex flex-col items-center justify-evenly'>
+      <div className='absolute inset-0 flex flex-col items-center justify-evenly bg-cyan-100'>
         <div className="flex flex-col items-center justify-center gap-2">
           <div style={{height: '200px', width: '200px'}}>
             <Suspense fallback={<Spinner/>}>

@@ -99,7 +99,7 @@ export function CompleteFishModel(props: FishModelProps) {
       }
 
       // Once fish is off screen trigger splash sound, but only once
-      if (fishRef.current!.position.z < -20 && !swamAway) {
+      if (fishRef.current!.position.z < -10 && !swamAway) {
         setSwamAway(true);
         audioRef.current.currentTime = 0;
         audioRef.current.play();

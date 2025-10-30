@@ -116,7 +116,7 @@ function App() {
 
   return (
     <>
-      <div className="p-1">
+      <div className="p-1 bg-cyan-100">
         {(viewState == 0) && <StartView getStarted={() => setViewState(1)}/>}
         {(viewState == 1) && <FishDesignerView config={config} addFish={addFish} goBack={() => setViewState(0)}></FishDesignerView>}
         {(viewState == 2) && <SelectDeviceView config={config} connected={true} goBack={() => setViewState(1)} updateDevice={updateDevice}></SelectDeviceView>}
