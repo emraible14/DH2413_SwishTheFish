@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -34,3 +35,4 @@ public class PathingEditor : Editor
         }
     }
 }
+#endif
