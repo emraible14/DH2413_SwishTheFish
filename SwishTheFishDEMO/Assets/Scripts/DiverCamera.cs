@@ -130,9 +130,9 @@ public class DiverCamera : MonoBehaviour
     IEnumerator TransitionImage()
     {
         duringTransition = true;
-        Debug.Log("let's wait for the transition");
+        //Debug.Log("let's wait for the transition");
         yield return new WaitForSeconds(transitionDelay);
-        Debug.Log("we finied waiting for the transition");
+        //Debug.Log("we finied waiting for the transition");
 
         if (transitioning && !waitingTransition)
         {
@@ -145,10 +145,20 @@ public class DiverCamera : MonoBehaviour
             Vector3 endRot = sceneToDiver ? diverRot : phRot;
             float endFOV = sceneToDiver ? diverFOV : phFOV;
 
-            Debug.Log("Let's start the transition. Here are our variables:\n" +
-                startPos + " -> " + endPos + "\n" +
-                startRot + " -> " + endRot + "\n" +
-                startFOV + " -> " + endFOV);
+            //Debug.Log("Let's start the transition. Here are our variables:\n" +
+            //    startPos + " -> " + endPos + "\n" +
+            //    startRot + " -> " + endRot + "\n" +
+            //    startFOV + " -> " + endFOV);
+
+            Color underwaterColor = new Color(0.59f, 1.81f, 2.11f, 1f);
+
+            Color startColor = sceneToDiver ? initialColor : underwaterColor;
+            Color endColor = sceneToDiver ? underwaterColor : initialColor;
+            float startLensDis = sceneToDiver ? 0f : -59f;
+            float endLensDis = sceneToDiver ? -59f : 0f;
+            float startDepth = sceneToDiver ? 32f : 5f;
+            float endDepth = sceneToDiver ? 5f : 32f;
+
 
             float elapsed = 0f;
             while (elapsed < transitionDuration)
@@ -159,10 +169,15 @@ public class DiverCamera : MonoBehaviour
                 diverCamera.transform.eulerAngles = Vector3.Lerp(startRot, endRot, t);
                 diverCamera.fieldOfView = Mathf.Lerp(startFOV, endFOV, t);
 
+                if (colorGrading != null) colorGrading.colorFilter.value = Color.Lerp(startColor, endColor, t);
+                if (lensDistortion != null) lensDistortion.intensity.value = Mathf.Lerp(startLensDis, endLensDis, t);
+                if (depthOfField != null) depthOfField.aperture.value = Mathf.Lerp(startDepth, endDepth, t);
+
+                /*
                 if (diverCamera.transform.position.y < 35)
                 {
                     if (colorGrading != null) colorGrading.colorFilter.value = new Color(0.59f, 1.81f, 2.11f, 1f);
-                    if (lensDistortion != null) lensDistortion.intensity.value = -59;
+                    if (lensDistortion != null) lensDistortion.lensDistortion = -59;
                     if (depthOfField != null) depthOfField.aperture.value = 5;
 
                 }
@@ -172,6 +187,7 @@ public class DiverCamera : MonoBehaviour
                     if (lensDistortion != null) lensDistortion.intensity.value = 0;
                     if (depthOfField != null) depthOfField.aperture.value = 32;
                 }
+                */
 
 
                 yield return null;
@@ -187,10 +203,10 @@ public class DiverCamera : MonoBehaviour
     public void AddDiver(ObjectInput prop)
     {
         if (prop != null && prop.tagValue == TableManager.DiverId)
-        // if (Input.GetKey(KeyCode.M))
+        //if (Input.GetKey(KeyCode.M))
         {
             Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-            //  Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+            //Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
             //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
             Vector3 propRot = new Vector3(0f, 0f, 0f);
 
@@ -235,7 +251,7 @@ public class DiverCamera : MonoBehaviour
 
             diverPos = propPos;
             diverRot = propRot;
-            Debug.Log("the diver's original position is " + diverPos);
+            //Debug.Log("the diver's original position is " + diverPos);
         }
         else
         {
