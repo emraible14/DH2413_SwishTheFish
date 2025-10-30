@@ -195,7 +195,7 @@ public class BoidManager : MonoBehaviour
     public void EliminateFishes()
     {
         int n_boids = GetNumBoids();
-        int max_boids = 50;
+        int max_boids = 40;
         if (n_boids > max_boids)
         {
             int diff = n_boids - max_boids;

@@ -202,79 +202,82 @@ public class DiverCamera : MonoBehaviour
 
     public void AddDiver(ObjectInput prop)
     {
-        if (prop != null && prop.tagValue == TableManager.DiverId)
-        //if (Input.GetKey(KeyCode.M))
-        {
-            Vector3 propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
-            //Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
-            //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
-            Vector3 propRot = new Vector3(0f, 0f, 0f);
-
-            if (presentDiver)
+        bool diverPropOnTable = prop != null && prop.tagValue == TableManager.DiverId;
+        if (diverPropOnTable || Input.GetKey(KeyCode.M))
             {
-                //Debug.Log("we already have a diver, we just move it");
-                //propPos.y = diverCamera.transform.position.y;
-                if (duringTransition)
+                Vector3 propPos = new Vector3(-31.4f, -10.8f, -13.9f);
+                if (diverPropOnTable)
                 {
-                    //Debug.Log("while still a diver, we're transitioning");
-                    //return;
+                    propPos = Helpers.ReverseZIndex(Helpers.GetWorldPositionOnPlane(camera, prop.position));
                 }
-                else
-                {
-                    //Debug.Log("we had a prop and were not transitioning, let's move to the new position");
-                    //diverCamera.transform.position = Vector3.Lerp(diverCamera.transform.position, propPos, Time.fixedDeltaTime * 10);
-                }
-                //transitioning = false;
-            }
-            else
-            {
-                //Debug.Log("we didn't have a diver, now we do. Technically, it's S to D");
-                //propPos.y -= 2f;
-                if (duringTransition)
-                {
-                    //Debug.Log("we're already transitioning, from D to S. We stay at the surface. We stay at D");
-                    transitioning = false;
+                //Vector3 propRot = new Vector3(90, Helpers.GetPropOrientationDeg(prop.orientation), 0);
+                Vector3 propRot = new Vector3(0f, 0f, 0f);
 
-                    if ((propPos - diverPos).magnitude > 0.1f)
+                if (presentDiver)
+                {
+                    //Debug.Log("we already have a diver, we just move it");
+                    //propPos.y = diverCamera.transform.position.y;
+                    if (duringTransition)
                     {
-                        //Debug.Log("huge difference between our prop at " + propPos + " and our original diver spot at " + diverPos);
-                        diverCamera.transform.position = Vector3.Lerp(diverCamera.transform.position, propPos, Time.fixedDeltaTime * 10);
+                        //Debug.Log("while still a diver, we're transitioning");
+                        //return;
                     }
+                    else
+                    {
+                        //Debug.Log("we had a prop and were not transitioning, let's move to the new position");
+                        //diverCamera.transform.position = Vector3.Lerp(diverCamera.transform.position, propPos, Time.fixedDeltaTime * 10);
+                    }
+                    //transitioning = false;
                 }
                 else
                 {
-                    transitioning = true;
-                }
-                sceneToDiver = true;
-                presentDiver = true;
-            }
+                    //Debug.Log("we didn't have a diver, now we do. Technically, it's S to D");
+                    //propPos.y -= 2f;
+                    if (duringTransition)
+                    {
+                        //Debug.Log("we're already transitioning, from D to S. We stay at the surface. We stay at D");
+                        transitioning = false;
 
-            diverPos = propPos;
-            diverRot = propRot;
-            //Debug.Log("the diver's original position is " + diverPos);
-        }
-        else
-        {
-            if (presentDiver)
-            {
-                //Debug.Log("first frame since we don't have a diver anymore. Technically, now it's D to S");
-                RenderSettings.fog = false;
-                if (!duringTransition)
-                {
-                    transitioning = true;
-                    presentDiver = false;
+                        if ((propPos - diverPos).magnitude > 0.1f)
+                        {
+                            //Debug.Log("huge difference between our prop at " + propPos + " and our original diver spot at " + diverPos);
+                            diverCamera.transform.position = Vector3.Lerp(diverCamera.transform.position, propPos, Time.fixedDeltaTime * 10);
+                        }
+                    }
+                    else
+                    {
+                        transitioning = true;
+                    }
+                    sceneToDiver = true;
+                    presentDiver = true;
                 }
-                else
-                {
-                    //Debug.Log("we're actually already transitioning from S to D. We stay at S");
-                    transitioning = false;
-                    presentDiver = false;
-                }
-                sceneToDiver = false;
+
+                diverPos = propPos;
+                diverRot = propRot;
+                //Debug.Log("the diver's original position is " + diverPos);
             }
-            presentDiver = false;
+        else
+            {
+                if (presentDiver)
+                {
+                    //Debug.Log("first frame since we don't have a diver anymore. Technically, now it's D to S");
+                    RenderSettings.fog = false;
+                    if (!duringTransition)
+                    {
+                        transitioning = true;
+                        presentDiver = false;
+                    }
+                    else
+                    {
+                        //Debug.Log("we're actually already transitioning from S to D. We stay at S");
+                        transitioning = false;
+                        presentDiver = false;
+                    }
+                    sceneToDiver = false;
+                }
+                presentDiver = false;
+            }
         }
-    }
 
     public void DiverInput()
     {
